@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeSlash } from '@phosphor-icons/react';
 // import { useAuth } from '@/lib/auth'; // In a real app this would be used
@@ -29,6 +30,21 @@ export default function SignupPage() {
 
   return (
     <div className="w-full">
+      {/* Mobile Branding Header */}
+      <div className="lg:hidden flex items-center gap-3 mb-8">
+        <Image
+          src="/logo-without text.png"
+          alt="Aura Asset Management"
+          width={36}
+          height={36}
+          className="w-9 h-9 object-contain"
+        />
+        <div>
+          <div className="text-sm font-semibold text-navy-900 tracking-wider">AURA ASSET MANAGEMENT</div>
+          <div className="text-[10px] text-slate-500 uppercase tracking-widest font-medium">Private Wealth Portal</div>
+        </div>
+      </div>
+
       <div className="mb-8">
         <h2 className="text-2xl font-semibold text-slate-900">Create your account</h2>
       </div>

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { 
   House, 
@@ -41,18 +42,23 @@ export function Sidebar() {
   return (
     <aside className="w-60 h-screen fixed top-0 left-0 bg-white border-r border-slate-200/60 flex flex-col z-20">
       {/* Branding */}
-      <div className="h-14 flex items-center px-6 border-b border-slate-200/60">
-        <div className="flex flex-col">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-gold-500 text-navy-900 flex items-center justify-center font-bold text-sm">
-              A
-            </div>
+      <div className="h-14 flex items-center px-5 border-b border-slate-200/60">
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <Image
+            src="/logo-without text.png"
+            alt="Aura Asset Management"
+            width={32}
+            height={32}
+            className="w-8 h-8 object-contain transition-transform group-hover:scale-105"
+            priority
+          />
+          <div className="flex flex-col">
             <div className="text-navy-900 font-semibold tracking-wide text-sm flex items-center gap-1">
-              AURA <span className="bg-navy-900 text-white text-[9px] px-1 py-0.5 rounded-sm">ASSET</span>
+              AURA <span className="bg-navy-900 text-white text-[9px] px-1 py-0.5 rounded-sm font-medium">ASSET</span>
             </div>
+            <span className="text-[9px] text-slate-500 uppercase tracking-widest">Wealth Portal</span>
           </div>
-          <span className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Wealth Portal</span>
-        </div>
+        </Link>
       </div>
 
       {/* Main Nav */}

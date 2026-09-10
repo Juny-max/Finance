@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileText, Download, Printer, X, Info } from '@phosphor-icons/react';
 import { useAuth } from '@/lib/auth';
@@ -125,9 +126,18 @@ export default function StatementsPage() {
               <div className="flex-1 overflow-y-auto p-4 sm:p-8">
                 <div className="bg-white w-full max-w-3xl mx-auto min-h-full shadow-sm rounded border border-slate-200 p-8 sm:p-12">
                   <div className="flex justify-between items-start mb-12">
-                    <div>
-                      <h1 className="text-2xl font-bold tracking-tight text-navy-900">Aura Asset Management</h1>
-                      <p className="text-xs text-slate-500 mt-1">Wealth Management & Investment Advisory</p>
+                    <div className="flex items-center gap-3.5">
+                      <Image
+                        src="/logo-without text.png"
+                        alt="Aura Asset Management"
+                        width={44}
+                        height={44}
+                        className="w-11 h-11 object-contain"
+                      />
+                      <div>
+                        <h1 className="text-2xl font-bold tracking-tight text-navy-900">Aura Asset Management</h1>
+                        <p className="text-xs text-slate-500 mt-0.5">Wealth Management & Investment Advisory</p>
+                      </div>
                     </div>
                     <div className="text-right text-sm text-slate-600">
                       <p className="font-semibold text-slate-900 capitalize">{previewDoc.type} Statement</p>

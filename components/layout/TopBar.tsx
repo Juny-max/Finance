@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { MagnifyingGlass, Bell, UserCircle, SignOut } from '@phosphor-icons/react';
 import { useAuth } from '@/lib/auth';
@@ -22,8 +23,17 @@ export function TopBar() {
 
   return (
     <header className="h-14 bg-white border-b border-slate-200/60 flex items-center justify-between px-6 sticky top-0 z-10">
-      <div className="flex-1">
-        {/* Breadcrumbs or Page Title could go here */}
+      <div className="flex-1 flex items-center">
+        <Link href="/" className="lg:hidden flex items-center gap-2">
+          <Image
+            src="/logo-without text.png"
+            alt="Aura Logo"
+            width={26}
+            height={26}
+            className="w-6.5 h-6.5 object-contain"
+          />
+          <span className="text-sm font-semibold text-navy-900 tracking-wider">AURA</span>
+        </Link>
       </div>
 
       <div className="flex items-center gap-4">

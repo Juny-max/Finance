@@ -1,0 +1,17 @@
+{
+  "name": "Aura Wealth Portal",
+  "short_name": "Aura Wealth",
+  "description": "Institutional wealth management and collective investment schemes by Aura Asset Management Limited.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B192C",
+  "theme_color": "#0B192C",
+  "icons": [
+    {
+      "src": "/logo-without text.png",
+      "sizes": "192x192 512x512 1254x1254",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

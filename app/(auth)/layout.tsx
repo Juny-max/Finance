@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -8,12 +9,24 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       {/* Left side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 bg-navy-900 flex-col justify-center px-16 relative overflow-hidden">
         <div className="relative z-10 max-w-md">
-          <div className="flex items-center gap-3 mb-12">
-            <div className="w-10 h-10 rounded bg-gold-500 text-navy-900 flex items-center justify-center font-bold text-2xl">
-              A
+          <div className="flex items-center gap-3.5 mb-12">
+            <div className="w-12 h-12 rounded-lg bg-white/10 p-1.5 flex items-center justify-center backdrop-blur-sm border border-white/15 shadow-inner">
+              <Image
+                src="/logo-without text.png"
+                alt="Aura Asset Management"
+                width={40}
+                height={40}
+                className="w-full h-full object-contain"
+                priority
+              />
             </div>
-            <div className="text-white font-semibold tracking-wider">
-              AURA ASSET MANAGEMENT
+            <div>
+              <div className="text-white font-semibold tracking-wider text-base">
+                AURA ASSET MANAGEMENT
+              </div>
+              <div className="text-[10px] text-gold-400 uppercase tracking-widest font-medium">
+                Private Wealth & Advisory
+              </div>
             </div>
           </div>
           <h1 className="text-4xl text-white font-light leading-tight mb-6">
