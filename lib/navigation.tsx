@@ -18,29 +18,44 @@ const NavigationContext = createContext<NavigationContextType>({
 export function NavigationProvider({ children }: { children: ReactNode }) {
   const [pendingHref, setPendingHref] = useState<string | null>(null);
   const pathname = usePathname();
+  const timerRef = React.useRef<NodeJS.Timeout | null>(null);
 
+  // When pathname changes, navigation has finished
   useEffect(() => {
-    // Pathname changed, transition completed
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
     setPendingHref(null);
   }, [pathname]);
 
   const startNavigation = (href: string) => {
-    if (href !== pathname) {
-      setPendingHref(href);
-      // Safety timeout after 6 seconds
-      const timer = setTimeout(() => {
-        setPendingHref((current) => (current === href ? null : current));
-      }, 6000);
-      return () => clearTimeout(timer);
+    // Discard empty, hash/anchor, or identical route clicks
+    if (!href || href === '#' || href.startsWith('#') || href === pathname) {
+      return;
     }
+
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+
+    setPendingHref(href);
+
+    // Safety timeout: dismiss after 1.2s max if no pathname change occurs
+    timerRef.current = setTimeout(() => {
+      setPendingHref(null);
+      timerRef.current = null;
+    }, 1200);
   };
+
+  const isNavigating = Boolean(pendingHref && pendingHref !== pathname);
 
   return (
     <NavigationContext.Provider
       value={{
-        pendingHref,
+        pendingHref: isNavigating ? pendingHref : null,
         startNavigation,
-        isNavigating: Boolean(pendingHref),
+        isNavigating,
       }}
     >
       {children}
