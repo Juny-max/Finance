@@ -13,9 +13,11 @@ import {
   ChartLine, 
   Question, 
   Gear, 
-  UserCircle 
+  UserCircle,
+  CircleNotch
 } from '@phosphor-icons/react';
 import { useAuth } from '@/lib/auth';
+import { useNavigationState } from '@/lib/navigation';
 
 const NAV_ITEMS = [
   { name: 'Overview', href: '/', icon: House },
@@ -36,6 +38,7 @@ const BOTTOM_NAV_ITEMS = [
 export function Sidebar() {
   const pathname = usePathname();
   const { isDemoMode, switchPersona, users, user } = useAuth();
+  const { pendingHref, startNavigation } = useNavigationState();
 
   return (
     <aside className="w-60 h-screen fixed top-0 left-0 bg-white border-r border-slate-200/60 flex flex-col z-20">
@@ -59,20 +62,31 @@ export function Sidebar() {
         <ul className="space-y-1">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href;
+            const isPending = pendingHref === item.href && !isActive;
             const Icon = item.icon;
             
             return (
               <li key={item.name}>
                 <Link
                   href={item.href}
-                  className={`flex items-center px-6 py-2.5 text-sm transition-colors ${
+                  onClick={() => startNavigation(item.href)}
+                  className={`flex items-center px-6 py-2.5 text-sm transition-all duration-150 active:scale-[0.98] ${
                     isActive 
                       ? 'bg-slate-50 text-navy-900 font-medium border-l-2 border-gold-500' 
-                      : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 border-l-2 border-transparent'
+                      : isPending
+                        ? 'bg-slate-100 text-navy-900 font-medium border-l-2 border-gold-400'
+                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 border-l-2 border-transparent'
                   }`}
                 >
-                  <Icon size={20} weight={isActive ? 'fill' : 'bold'} className="mr-3" />
-                  {item.name}
+                  <Icon 
+                    size={20} 
+                    weight={isActive ? 'fill' : 'bold'} 
+                    className={`mr-3 transition-transform ${isPending ? 'scale-110 text-navy-900' : ''}`} 
+                  />
+                  <span className="flex-1">{item.name}</span>
+                  {isPending && (
+                    <CircleNotch size={16} weight="bold" className="animate-spin text-gold-500 shrink-0 ml-2" />
+                  )}
                 </Link>
               </li>
             );
@@ -86,20 +100,31 @@ export function Sidebar() {
         <ul className="space-y-1">
           {BOTTOM_NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href;
+            const isPending = pendingHref === item.href && !isActive;
             const Icon = item.icon;
             
             return (
               <li key={item.name}>
                 <Link
                   href={item.href}
-                  className={`flex items-center px-6 py-2.5 text-sm transition-colors ${
+                  onClick={() => startNavigation(item.href)}
+                  className={`flex items-center px-6 py-2.5 text-sm transition-all duration-150 active:scale-[0.98] ${
                     isActive 
                       ? 'bg-slate-50 text-navy-900 font-medium border-l-2 border-gold-500' 
-                      : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 border-l-2 border-transparent'
+                      : isPending
+                        ? 'bg-slate-100 text-navy-900 font-medium border-l-2 border-gold-400'
+                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 border-l-2 border-transparent'
                   }`}
                 >
-                  <Icon size={20} weight={isActive ? 'fill' : 'bold'} className="mr-3" />
-                  {item.name}
+                  <Icon 
+                    size={20} 
+                    weight={isActive ? 'fill' : 'bold'} 
+                    className={`mr-3 transition-transform ${isPending ? 'scale-110 text-navy-900' : ''}`} 
+                  />
+                  <span className="flex-1">{item.name}</span>
+                  {isPending && (
+                    <CircleNotch size={16} weight="bold" className="animate-spin text-gold-500 shrink-0 ml-2" />
+                  )}
                 </Link>
               </li>
             );
