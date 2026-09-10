@@ -6,8 +6,8 @@ import { Providers } from './providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Bora Investor Portal',
-  description: 'Your portfolio. Your investments. Your financial future.',
+  title: 'Aura Wealth Portal — Aura Asset Management',
+  description: 'Institutional wealth management, portfolio performance, and asset advisory.',
 };
 
 export default function RootLayout({

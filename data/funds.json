@@ -1,7 +1,7 @@
 [
   {
-    "id": "bora-fixed-income",
-    "name": "Bora Fixed Income Unit Trust",
+    "id": "aura-fixed-income",
+    "name": "Aura Fixed Income Fund",
     "shortName": "Fixed Income",
     "type": "Money Market / Fixed Income",
     "riskLevel": "Low to Medium",
@@ -32,8 +32,8 @@
     ]
   },
   {
-    "id": "bora-balanced",
-    "name": "Bora Balanced Unit Trust",
+    "id": "aura-balanced",
+    "name": "Aura Balanced Fund",
     "shortName": "Balanced",
     "type": "Balanced / Multi-Asset",
     "riskLevel": "Medium",
@@ -64,8 +64,8 @@
     ]
   },
   {
-    "id": "bora-global",
-    "name": "Bora Global Balanced Trust",
+    "id": "aura-global",
+    "name": "Aura Global Balanced Trust",
     "shortName": "Global Balanced",
     "type": "Global / Multi-Currency",
     "riskLevel": "Medium to High",
@@ -96,4 +96,3 @@
     ]
   }
 ]
-

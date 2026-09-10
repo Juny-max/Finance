@@ -126,7 +126,7 @@ export default function StatementsPage() {
                 <div className="bg-white w-full max-w-3xl mx-auto min-h-full shadow-sm rounded border border-slate-200 p-8 sm:p-12">
                   <div className="flex justify-between items-start mb-12">
                     <div>
-                      <h1 className="text-2xl font-bold tracking-tight text-navy-900">Bora Capital Advisors</h1>
+                      <h1 className="text-2xl font-bold tracking-tight text-navy-900">Aura Asset Management</h1>
                       <p className="text-xs text-slate-500 mt-1">Wealth Management & Investment Advisory</p>
                     </div>
                     <div className="text-right text-sm text-slate-600">
@@ -201,8 +201,8 @@ export default function StatementsPage() {
                     <div className="flex items-center gap-2 text-amber-600 bg-amber-50 p-2 rounded mb-4">
                       <Info size={16} /> Prototype document — illustrative data only.
                     </div>
-                    <p>Bora Capital Advisors Limited is licensed and regulated by the Securities and Exchange Commission (SEC) of Ghana.</p>
-                    <p>No. 14 Senchi Street, Airport Residential Area, Accra | +233 30 277 4839 | info@boracapital.com</p>
+                    <p>Aura Asset Management Limited is licensed and regulated by the Securities and Exchange Commission (SEC) of Ghana.</p>
+                    <p>No. 14 Senchi Street, Airport Residential Area, Accra | +233 30 277 4839 | info@auraasset.com</p>
                   </div>
                 </div>
               </div>

@@ -10,7 +10,7 @@ export default function SupportPage() {
 
   const faqs = [
     {
-      q: 'How do I invest in a Bora fund?',
+      q: 'How do I invest in an Aura fund?',
       a: 'To invest, click the "Invest" button on your dashboard or navigate to a specific fund page. Select your funding method (Bank Transfer or Mobile Money), enter the amount, and confirm. Your units will be allocated at the closing NAV of T+1 business day.'
     },
     {
@@ -23,7 +23,7 @@ export default function SupportPage() {
     },
     {
       q: 'How is my money protected?',
-      a: 'Bora Capital Advisors is licensed and regulated by the Securities and Exchange Commission (SEC) of Ghana. All fund assets are held by an independent custodian bank, ensuring separation of client assets from management company assets.'
+      a: 'Aura Asset Management is licensed and regulated by the Securities and Exchange Commission (SEC) of Ghana. All fund assets are held by an independent custodian bank, ensuring separation of client assets from management company assets.'
     }
   ];
 
@@ -64,7 +64,7 @@ export default function SupportPage() {
         {[
           { icon: <Coins size={24} weight="duotone" />, title: 'Investments', desc: 'How to invest, fund selection, investment minimums' },
           { icon: <ArrowUp size={24} weight="duotone" />, title: 'Withdrawals', desc: 'Redemption process, processing times, charges' },
-          { icon: <ArrowsLeftRight size={24} weight="duotone" />, title: 'Fund switching', desc: 'Switch between Bora funds' },
+          { icon: <ArrowsLeftRight size={24} weight="duotone" />, title: 'Fund switching', desc: 'Switch between Aura funds' },
           { icon: <FileText size={24} weight="duotone" />, title: 'Statements', desc: 'Access and download your documents' },
           { icon: <UserCircle size={24} weight="duotone" />, title: 'Account', desc: 'Profile, KYC, account settings' },
           { icon: <Lock size={24} weight="duotone" />, title: 'Security', desc: 'Password, 2FA, login activity' },
@@ -125,7 +125,7 @@ export default function SupportPage() {
               <Envelope size={18} className="text-slate-400 shrink-0 mt-0.5" />
               <div>
                 <p className="text-slate-500">Email</p>
-                <p className="font-medium text-slate-900">support@boracapital.com</p>
+                <p className="font-medium text-slate-900">support@auraasset.com</p>
               </div>
             </div>
             <div className="flex gap-3">

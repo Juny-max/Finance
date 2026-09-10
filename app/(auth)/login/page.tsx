@@ -44,7 +44,7 @@ export default function LoginPage() {
     <div className="w-full">
       <div className="mb-8">
         <h2 className="text-2xl font-semibold text-slate-900">Sign in to your account</h2>
-        <p className="text-sm text-slate-500 mt-2">Access your Bora investment portfolio</p>
+        <p className="text-sm text-slate-500 mt-2">Access your Aura wealth portfolio</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">

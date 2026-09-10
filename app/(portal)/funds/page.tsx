@@ -17,7 +17,7 @@ export default function FundsPage() {
       className="max-w-6xl mx-auto space-y-8 pb-12"
     >
       <div className="mt-4">
-        <h1 className="text-3xl font-light text-slate-900 tracking-tight">Bora Funds</h1>
+        <h1 className="text-3xl font-light text-slate-900 tracking-tight">Aura Funds</h1>
         <p className="text-slate-500 mt-2">Explore our range of collective investment schemes</p>
       </div>
 

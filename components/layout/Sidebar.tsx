@@ -44,13 +44,13 @@ export function Sidebar() {
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded bg-gold-500 text-navy-900 flex items-center justify-center font-bold text-sm">
-              B
+              A
             </div>
             <div className="text-navy-900 font-semibold tracking-wide text-sm flex items-center gap-1">
-              BORA <span className="bg-navy-900 text-white text-[9px] px-1 py-0.5 rounded-sm">CAPITAL</span>
+              AURA <span className="bg-navy-900 text-white text-[9px] px-1 py-0.5 rounded-sm">ASSET</span>
             </div>
           </div>
-          <span className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Investor Portal</span>
+          <span className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Wealth Portal</span>
         </div>
       </div>
 

@@ -10,10 +10,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="relative z-10 max-w-md">
           <div className="flex items-center gap-3 mb-12">
             <div className="w-10 h-10 rounded bg-gold-500 text-navy-900 flex items-center justify-center font-bold text-2xl">
-              B
+              A
             </div>
             <div className="text-white font-semibold tracking-wider">
-              BORA CAPITAL ADVISORS
+              AURA ASSET MANAGEMENT
             </div>
           </div>
           <h1 className="text-4xl text-white font-light leading-tight mb-6">

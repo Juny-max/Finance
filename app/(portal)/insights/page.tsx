@@ -177,7 +177,7 @@ export default function InsightsPage() {
                 <tr className="border-b border-slate-100">
                   <th className="pb-3 text-xs font-medium text-slate-500 uppercase tracking-wide">Metric</th>
                   <th className="pb-3 text-xs font-medium text-slate-500 uppercase tracking-wide text-right">Your Portfolio</th>
-                  <th className="pb-3 text-xs font-medium text-slate-500 uppercase tracking-wide text-right">Bora Benchmark</th>
+                  <th className="pb-3 text-xs font-medium text-slate-500 uppercase tracking-wide text-right">Aura Benchmark</th>
                   <th className="pb-3 text-xs font-medium text-slate-500 uppercase tracking-wide text-right">GoG 91-Day</th>
                 </tr>
               </thead>

@@ -5,7 +5,7 @@
     "password": "demo1234",
     "firstName": "Kwame",
     "lastName": "Mensah",
-    "accountNumber": "BC-20491",
+    "accountNumber": "AM-20491",
     "accountType": "individual",
     "riskProfile": "balanced",
     "phone": "+233 24 412 8990",
@@ -17,7 +17,7 @@
     "advisor": {
       "name": "Ama Serwaa Boateng",
       "role": "Senior Relationship Manager",
-      "email": "ama.boateng@boracapital.com",
+      "email": "ama.boateng@auraasset.com",
       "phone": "+233 30 277 4839"
     },
     "bankAccounts": [
@@ -37,7 +37,7 @@
     "password": "demo1234",
     "firstName": "GCB Staff",
     "lastName": "Provident Scheme",
-    "accountNumber": "BC-88102",
+    "accountNumber": "AM-88102",
     "accountType": "institutional",
     "riskProfile": "balanced",
     "phone": "+233 30 268 1500",
@@ -49,7 +49,7 @@
     "advisor": {
       "name": "Nana Yaw Asante",
       "role": "Head of Institutional Mandates",
-      "email": "n.asante@boracapital.com",
+      "email": "n.asante@auraasset.com",
       "phone": "+233 30 277 4840"
     },
     "bankAccounts": [
@@ -59,4 +59,3 @@
     "beneficiaries": []
   }
 ]
-

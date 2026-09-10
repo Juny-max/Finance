@@ -237,7 +237,7 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-slate-400" />
-            <span className="text-xs text-slate-600">Bora benchmark</span>
+            <span className="text-xs text-slate-600">Aura benchmark</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-slate-300" />
@@ -335,7 +335,7 @@ export default function DashboardPage() {
           <p className="text-lg font-semibold text-slate-900 mt-1">Sarah Osei-Bonsu</p>
           <p className="text-sm text-slate-600">Senior Wealth Advisor</p>
           <div className="flex gap-4 mt-2 text-sm text-slate-600">
-            <span>s.osei-bonsu@boracapital.com</span>
+            <span>s.osei-bonsu@auraasset.com</span>
             <span>+233 24 123 4567</span>
           </div>
         </div>

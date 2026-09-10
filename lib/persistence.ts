@@ -1,4 +1,4 @@
-const PREFIX = "bora_";
+const PREFIX = "aura_";
 
 export function loadFromStorage<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;

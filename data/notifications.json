@@ -1,6 +1,6 @@
 [
-  { "id": "n_01", "userId": "usr_kwame", "title": "Investment confirmed", "message": "Your investment of GH₵ 5,000.00 in Bora Fixed Income Unit Trust has been processed. 3,373.81 units allocated at GH₵ 1.4820.", "type": "investment", "date": "2026-09-02", "read": false },
-  { "id": "n_02", "userId": "usr_kwame", "title": "Dividend reinvested", "message": "Q3 2026 dividend of GH₵ 1,732.54 has been reinvested into Bora Balanced Unit Trust.", "type": "investment", "date": "2026-08-15", "read": false },
+  { "id": "n_01", "userId": "usr_kwame", "title": "Investment confirmed", "message": "Your investment of GH₵ 5,000.00 in Aura Fixed Income Fund has been processed. 3,373.81 units allocated at GH₵ 1.4820.", "type": "investment", "date": "2026-09-02", "read": false },
+  { "id": "n_02", "userId": "usr_kwame", "title": "Dividend reinvested", "message": "Q3 2026 dividend of GH₵ 1,732.54 has been reinvested into Aura Balanced Fund.", "type": "investment", "date": "2026-08-15", "read": false },
   { "id": "n_03", "userId": "usr_kwame", "title": "Statement available", "message": "Your August 2026 monthly statement is ready to view and download.", "type": "statement", "date": "2026-09-05", "read": false },
   { "id": "n_04", "userId": "usr_kwame", "title": "Fund prices updated", "message": "Daily NAV prices for 9 September 2026 have been published.", "type": "price", "date": "2026-09-09", "read": true },
   { "id": "n_05", "userId": "usr_kwame", "title": "Security alert", "message": "New login detected from Accra, Ghana. If this was not you, contact us immediately.", "type": "security", "date": "2026-09-08", "read": true },
@@ -9,4 +9,3 @@
   { "id": "n_i02", "userId": "usr_gcb", "title": "Quarterly board report ready", "message": "Q2 2026 Trustee Valuation Pack is available for download.", "type": "statement", "date": "2026-07-15", "read": false },
   { "id": "n_i03", "userId": "usr_gcb", "title": "NPRA compliance confirmed", "message": "Mandate is fully compliant with NPRA Tier-3 statutory asset allocation guidelines.", "type": "system", "date": "2026-08-20", "read": true }
 ]
-

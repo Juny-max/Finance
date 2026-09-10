@@ -60,7 +60,7 @@ export default function CalculatorPage() {
     >
       <div>
         <h1 className="text-3xl font-light text-slate-900 tracking-tight">See what your investment could become.</h1>
-        <p className="text-slate-500 mt-2">Project your potential returns with Bora unit trusts.</p>
+        <p className="text-slate-500 mt-2">Project your potential returns with Aura funds.</p>
       </div>
 
       <div className="grid lg:grid-cols-12 gap-12">
