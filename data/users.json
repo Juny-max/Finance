@@ -1,0 +1,62 @@
+[
+  {
+    "id": "usr_kwame",
+    "email": "kwame@example.com",
+    "password": "demo1234",
+    "firstName": "Kwame",
+    "lastName": "Mensah",
+    "accountNumber": "BC-20491",
+    "accountType": "individual",
+    "riskProfile": "balanced",
+    "phone": "+233 24 412 8990",
+    "address": "House 14, 4th Circular Road, Cantonments",
+    "city": "Accra",
+    "country": "Ghana",
+    "kycStatus": "verified",
+    "joinDate": "2023-03-15",
+    "advisor": {
+      "name": "Ama Serwaa Boateng",
+      "role": "Senior Relationship Manager",
+      "email": "ama.boateng@boracapital.com",
+      "phone": "+233 30 277 4839"
+    },
+    "bankAccounts": [
+      { "id": "ba_1", "bank": "Stanbic Bank Ghana", "accountNumber": "9040003418291", "branch": "Airport City", "primary": true }
+    ],
+    "momoAccounts": [
+      { "id": "mo_1", "network": "MTN", "number": "024 412 8990", "name": "KWAME MENSAH" }
+    ],
+    "beneficiaries": [
+      { "name": "Adwoa Mensah", "relationship": "Spouse", "phone": "+233 24 555 1234", "percentage": 60 },
+      { "name": "Kofi Mensah", "relationship": "Child", "phone": "+233 20 333 5678", "percentage": 40 }
+    ]
+  },
+  {
+    "id": "usr_gcb",
+    "email": "trustees@gcbprovident.com",
+    "password": "demo1234",
+    "firstName": "GCB Staff",
+    "lastName": "Provident Scheme",
+    "accountNumber": "BC-88102",
+    "accountType": "institutional",
+    "riskProfile": "balanced",
+    "phone": "+233 30 268 1500",
+    "address": "GCB High Street Building, Thorburn Avenue",
+    "city": "Accra",
+    "country": "Ghana",
+    "kycStatus": "verified",
+    "joinDate": "2021-01-10",
+    "advisor": {
+      "name": "Nana Yaw Asante",
+      "role": "Head of Institutional Mandates",
+      "email": "n.asante@boracapital.com",
+      "phone": "+233 30 277 4840"
+    },
+    "bankAccounts": [
+      { "id": "ba_2", "bank": "GCB Bank PLC", "accountNumber": "1011180004928", "branch": "High Street Corporate", "primary": true }
+    ],
+    "momoAccounts": [],
+    "beneficiaries": []
+  }
+]
+

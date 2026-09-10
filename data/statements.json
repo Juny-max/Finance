@@ -1,0 +1,14 @@
+[
+  { "id": "st_01", "userId": "usr_kwame", "name": "Monthly Statement — August 2026", "period": "monthly", "periodLabel": "August 2026", "generatedDate": "2026-09-05", "fileType": "PDF", "downloadUrl": "#" },
+  { "id": "st_02", "userId": "usr_kwame", "name": "Monthly Statement — July 2026", "period": "monthly", "periodLabel": "July 2026", "generatedDate": "2026-08-05", "fileType": "PDF", "downloadUrl": "#" },
+  { "id": "st_03", "userId": "usr_kwame", "name": "Quarterly Statement — Q2 2026", "period": "quarterly", "periodLabel": "Q2 2026 (Apr–Jun)", "generatedDate": "2026-07-15", "fileType": "PDF", "downloadUrl": "#" },
+  { "id": "st_04", "userId": "usr_kwame", "name": "Monthly Statement — June 2026", "period": "monthly", "periodLabel": "June 2026", "generatedDate": "2026-07-05", "fileType": "PDF", "downloadUrl": "#" },
+  { "id": "st_05", "userId": "usr_kwame", "name": "Quarterly Statement — Q1 2026", "period": "quarterly", "periodLabel": "Q1 2026 (Jan–Mar)", "generatedDate": "2026-04-15", "fileType": "PDF", "downloadUrl": "#" },
+  { "id": "st_06", "userId": "usr_kwame", "name": "Annual Statement — 2025", "period": "annual", "periodLabel": "Full Year 2025", "generatedDate": "2026-02-28", "fileType": "PDF", "downloadUrl": "#" },
+  { "id": "st_07", "userId": "usr_kwame", "name": "Investment Confirmation — Sep 2026", "period": "confirmation", "periodLabel": "2 Sep 2026", "generatedDate": "2026-09-02", "fileType": "PDF", "downloadUrl": "#" },
+
+  { "id": "st_i01", "userId": "usr_gcb", "name": "Monthly Trustee Report — August 2026", "period": "monthly", "periodLabel": "August 2026", "generatedDate": "2026-09-05", "fileType": "PDF", "downloadUrl": "#" },
+  { "id": "st_i02", "userId": "usr_gcb", "name": "Quarterly Board Report — Q2 2026", "period": "quarterly", "periodLabel": "Q2 2026 (Apr–Jun)", "generatedDate": "2026-07-15", "fileType": "PDF", "downloadUrl": "#" },
+  { "id": "st_i03", "userId": "usr_gcb", "name": "Annual Mandate Review — 2025", "period": "annual", "periodLabel": "Full Year 2025", "generatedDate": "2026-02-28", "fileType": "PDF", "downloadUrl": "#" }
+]
+

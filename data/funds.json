@@ -1,0 +1,99 @@
+[
+  {
+    "id": "bora-fixed-income",
+    "name": "Bora Fixed Income Unit Trust",
+    "shortName": "Fixed Income",
+    "type": "Money Market / Fixed Income",
+    "riskLevel": "Low to Medium",
+    "objective": "To preserve capital and generate competitive returns above inflation through investments primarily in Government of Ghana Treasury securities, high-grade corporate bonds, and bank fixed deposits.",
+    "nav": 1.4820,
+    "navDate": "2026-09-09",
+    "dailyChange": 0.0018,
+    "dailyChangePercent": 0.12,
+    "ytdReturn": 21.4,
+    "sinceInception": 88.4,
+    "fundSize": 245000000,
+    "minimumInvestment": 100,
+    "managementFee": 2.0,
+    "benchmark": "GoG 91-Day T-Bill",
+    "inceptionDate": "2019-06-01",
+    "composition": [
+      { "name": "Government Securities", "percentage": 62 },
+      { "name": "Corporate Bonds", "percentage": 16 },
+      { "name": "Fixed Deposits", "percentage": 14 },
+      { "name": "Cash & Equivalents", "percentage": 8 }
+    ],
+    "color": "#0B192C",
+    "documents": [
+      { "name": "Fund Prospectus", "type": "prospectus", "date": "2026-01-15" },
+      { "name": "Q2 2026 Factsheet", "type": "factsheet", "date": "2026-07-01" },
+      { "name": "Annual Report 2025", "type": "annual_report", "date": "2026-03-30" },
+      { "name": "Terms & Conditions", "type": "terms", "date": "2025-06-01" }
+    ]
+  },
+  {
+    "id": "bora-balanced",
+    "name": "Bora Balanced Unit Trust",
+    "shortName": "Balanced",
+    "type": "Balanced / Multi-Asset",
+    "riskLevel": "Medium",
+    "objective": "To achieve long-term capital appreciation through a diversified portfolio of equities listed on the Ghana Stock Exchange and fixed income securities, balancing growth potential with income stability.",
+    "nav": 2.1150,
+    "navDate": "2026-09-09",
+    "dailyChange": 0.0042,
+    "dailyChangePercent": 0.20,
+    "ytdReturn": 17.8,
+    "sinceInception": 114.2,
+    "fundSize": 182000000,
+    "minimumInvestment": 500,
+    "managementFee": 2.5,
+    "benchmark": "Composite (50% GSE-CI / 50% GoG 1-Year Note)",
+    "inceptionDate": "2018-03-15",
+    "composition": [
+      { "name": "Listed Equities (GSE)", "percentage": 42 },
+      { "name": "Government Securities", "percentage": 28 },
+      { "name": "Corporate Bonds", "percentage": 18 },
+      { "name": "Cash & Equivalents", "percentage": 12 }
+    ],
+    "color": "#059669",
+    "documents": [
+      { "name": "Fund Prospectus", "type": "prospectus", "date": "2026-01-15" },
+      { "name": "Q2 2026 Factsheet", "type": "factsheet", "date": "2026-07-01" },
+      { "name": "Annual Report 2025", "type": "annual_report", "date": "2026-03-30" },
+      { "name": "Terms & Conditions", "type": "terms", "date": "2025-06-01" }
+    ]
+  },
+  {
+    "id": "bora-global",
+    "name": "Bora Global Balanced Trust",
+    "shortName": "Global Balanced",
+    "type": "Global / Multi-Currency",
+    "riskLevel": "Medium to High",
+    "objective": "To provide portfolio diversification and hard-currency exposure through investments in pan-African sovereign debt, international equities, and dollar-denominated fixed income instruments.",
+    "nav": 1.8400,
+    "navDate": "2026-09-09",
+    "dailyChange": -0.0011,
+    "dailyChangePercent": -0.06,
+    "ytdReturn": 16.2,
+    "sinceInception": 64.8,
+    "fundSize": 98000000,
+    "minimumInvestment": 1000,
+    "managementFee": 2.75,
+    "benchmark": "MSCI Frontier Markets / Eurobonds",
+    "inceptionDate": "2020-09-01",
+    "composition": [
+      { "name": "Sovereign Eurobonds", "percentage": 35 },
+      { "name": "International Equities", "percentage": 25 },
+      { "name": "Pan-African Corporate Debt", "percentage": 22 },
+      { "name": "Money Market & FX Hedges", "percentage": 18 }
+    ],
+    "color": "#C4960A",
+    "documents": [
+      { "name": "Fund Prospectus", "type": "prospectus", "date": "2026-01-15" },
+      { "name": "Q2 2026 Factsheet", "type": "factsheet", "date": "2026-07-01" },
+      { "name": "Annual Report 2025", "type": "annual_report", "date": "2026-03-30" },
+      { "name": "Terms & Conditions", "type": "terms", "date": "2025-06-01" }
+    ]
+  }
+]
+
