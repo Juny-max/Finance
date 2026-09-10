@@ -15,18 +15,44 @@ import seedNotifications from "@/data/notifications.json";
 
 // ─── Computed portfolio data from seed ────────────────────────
 function computePortfolio(userId: string, funds: Fund[], transactions: Transaction[]): PortfolioData {
-  const userTxns = transactions.filter((t) => t.userId === userId);
-  const holdingsMap: Record<string, { units: number; invested: number }> = {};
+  const fiFund = funds.find(f => f.id.includes("fixed-income")) || funds[0];
+  const balFund = funds.find(f => f.id.includes("balanced") && !f.id.includes("global")) || funds[1] || funds[0];
+  const globFund = funds.find(f => f.id.includes("global")) || funds[2] || funds[0];
 
-  for (const txn of userTxns) {
-    if (!holdingsMap[txn.fundId]) holdingsMap[txn.fundId] = { units: 0, invested: 0 };
-    const h = holdingsMap[txn.fundId];
+  // Baseline holdings per persona (authentic starting allocations)
+  const holdingsMap: Record<string, { units: number; invested: number }> = {};
+  if (userId === "usr_gcb") {
+    const v1 = 8500000;
+    const v2 = 4250000;
+    const v3 = 2100000;
+    if (fiFund) holdingsMap[fiFund.id] = { units: Number((v1 / fiFund.nav).toFixed(2)), invested: 7225000 };
+    if (balFund) holdingsMap[balFund.id] = { units: Number((v2 / balFund.nav).toFixed(2)), invested: 3485000 };
+    if (globFund) holdingsMap[globFund.id] = { units: Number((v3 / globFund.nav).toFixed(2)), invested: 1729500 };
+  } else {
+    const v1 = 72400;
+    const v2 = 51250;
+    const v3 = 25000;
+    if (fiFund) holdingsMap[fiFund.id] = { units: Number((v1 / fiFund.nav).toFixed(2)), invested: 60816 };
+    if (balFund) holdingsMap[balFund.id] = { units: Number((v2 / balFund.nav).toFixed(2)), invested: 41512.5 };
+    if (globFund) holdingsMap[globFund.id] = { units: Number((v3 / globFund.nav).toFixed(2)), invested: 22911.5 };
+  }
+
+  // Apply transactions created during user session (id starting with txn_ and numeric timestamp)
+  const dynamicTxns = transactions.filter((t) => t.userId === userId && /^txn_\d{10,}/.test(t.id));
+  for (const txn of dynamicTxns) {
+    const normId = txn.fundId.replace(/^(bora|aura)-/, "");
+    const matchingFund = funds.find((f) => f.id === txn.fundId || f.id.replace(/^(bora|aura)-/, "") === normId) || funds[0];
+    const targetId = matchingFund ? matchingFund.id : txn.fundId;
+
+    if (!holdingsMap[targetId]) holdingsMap[targetId] = { units: 0, invested: 0 };
+    const h = holdingsMap[targetId];
+    const u = txn.units || (matchingFund ? txn.amount / matchingFund.nav : 0);
     if (txn.type === "investment" || txn.type === "dividend" || txn.type === "switch_in") {
-      h.units += txn.units;
+      h.units += u;
       h.invested += txn.amount;
     } else if (txn.type === "withdrawal" || txn.type === "switch_out") {
-      h.units -= txn.units;
-      h.invested -= txn.amount;
+      h.units = Math.max(0, h.units - u);
+      h.invested = Math.max(0, h.invested - txn.amount);
     }
   }
 
@@ -35,33 +61,29 @@ function computePortfolio(userId: string, funds: Fund[], transactions: Transacti
   let totalInvested = 0;
 
   for (const [fundId, data] of Object.entries(holdingsMap)) {
-    if (data.units <= 0) continue;
-    const fund = funds.find((f) => f.id === fundId);
+    if (data.units <= 0.001) continue;
+    const normId = fundId.replace(/^(bora|aura)-/, "");
+    const fund = funds.find((f) => f.id === fundId || f.id.replace(/^(bora|aura)-/, "") === normId);
     if (!fund) continue;
-    const currentValue = data.units * fund.nav;
-    const gainLoss = currentValue - data.invested;
+    const currentValue = Number((data.units * fund.nav).toFixed(2));
+    const gainLoss = Number((currentValue - data.invested).toFixed(2));
     totalValue += currentValue;
     totalInvested += Math.max(0, data.invested);
     holdings.push({
-      fundId, units: data.units, averageCost: data.invested / data.units,
-      currentValue, gainLoss, gainLossPercent: data.invested > 0 ? (gainLoss / data.invested) * 100 : 0,
+      fundId: fund.id,
+      fundName: fund.name,
+      units: Number(data.units.toFixed(2)),
+      averageCost: data.invested > 0 && data.units > 0 ? Number((data.invested / data.units).toFixed(4)) : fund.nav,
+      currentValue,
+      gainLoss,
+      gainLossPercent: data.invested > 0 ? Number(((gainLoss / data.invested) * 100).toFixed(2)) : 0,
       allocation: 0,
     });
   }
 
-  // For the individual persona use a known baseline
-  if (userId === "usr_kwame" && totalValue === 0) {
-    totalValue = 148650;
-    totalInvested = 125240;
-  }
-  if (userId === "usr_gcb" && totalValue === 0) {
-    totalValue = 14850000;
-    totalInvested = 12439500;
-  }
-
   // Compute allocation percentages
   for (const h of holdings) {
-    h.allocation = totalValue > 0 ? (h.currentValue / totalValue) * 100 : 0;
+    h.allocation = totalValue > 0 ? Number(((h.currentValue / totalValue) * 100).toFixed(1)) : 0;
   }
 
   const totalGain = totalValue - totalInvested;

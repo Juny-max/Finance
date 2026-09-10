@@ -1,13 +1,16 @@
 "use client";
-
+import { useState } from "react";
 import { useStore } from "@/lib/store";
 import { formatGHS, formatPercent } from "@/lib/formatters";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck } from "@phosphor-icons/react";
+import InvestFlow from "@/components/flows/InvestFlow";
 
 export default function FundsPage() {
-  const { funds, showToast } = useStore();
+  const { funds } = useStore();
+  const [selectedFundId, setSelectedFundId] = useState<string | null>(null);
+  const [isInvestOpen, setIsInvestOpen] = useState(false);
 
   return (
     <motion.div 
@@ -78,7 +81,10 @@ export default function FundsPage() {
                   View fund
                 </Link>
                 <button 
-                  onClick={() => showToast(`Opening invest flow for ${fund.name}`)}
+                  onClick={() => {
+                    setSelectedFundId(fund.id);
+                    setIsInvestOpen(true);
+                  }}
                   className="flex-1 h-10 flex items-center justify-center text-sm font-medium text-white bg-navy-900 rounded-md hover:bg-navy-800 transition-colors"
                 >
                   Invest
@@ -88,6 +94,12 @@ export default function FundsPage() {
           </div>
         ))}
       </div>
+
+      <InvestFlow 
+        isOpen={isInvestOpen} 
+        onClose={() => setIsInvestOpen(false)} 
+        preselectedFundId={selectedFundId || undefined} 
+      />
     </motion.div>
   );
 }

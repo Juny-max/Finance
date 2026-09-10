@@ -93,6 +93,7 @@ export interface FundDocument {
 // ─── Portfolio ─────────────────────────────────────────────
 export interface Holding {
   fundId: string;
+  fundName?: string;
   units: number;
   averageCost: number;
   currentValue: number;

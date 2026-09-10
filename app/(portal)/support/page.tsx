@@ -1,12 +1,26 @@
 'use client';
 import { Envelope, Phone, Calendar, Coins, ArrowUp, ArrowsLeftRight, FileText, UserCircle, Lock, CaretDown, Clock } from '@phosphor-icons/react';
 import { useStore } from '@/lib/store';
+import { useAuth } from '@/lib/auth';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { AdvisorMessageModal } from '@/components/advisor/AdvisorMessageModal';
+import { AdvisorCallbackModal } from '@/components/advisor/AdvisorCallbackModal';
 
 export default function SupportPage() {
+  const { user } = useAuth();
   const { showToast } = useStore();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [isMessageOpen, setIsMessageOpen] = useState(false);
+  const [isCallbackOpen, setIsCallbackOpen] = useState(false);
+
+  const advisor = user?.advisor || {
+    name: "Ama Serwaa Boateng",
+    role: "Senior Relationship Manager",
+    email: "ama.boateng@auraasset.com",
+    phone: "+233 30 277 4839"
+  };
+  const initials = advisor.name.split(" ").map(n => n[0]).slice(0, 2).join("");
 
   const faqs = [
     {
@@ -34,27 +48,45 @@ export default function SupportPage() {
         <p className="text-sm text-slate-500 mt-1">How can we help you today?</p>
       </div>
 
-      <div className="bg-navy-900 rounded-lg p-6 sm:p-8 text-white flex flex-col sm:flex-row gap-6 items-start sm:items-center justify-between">
+      <div className="bg-navy-900 rounded-lg p-6 sm:p-8 text-white flex flex-col sm:flex-row gap-6 items-start sm:items-center justify-between shadow-sm">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center text-xl font-semibold border border-white/20">
-            K
+            {initials}
           </div>
           <div>
-            <p className="text-navy-100 text-sm font-medium uppercase tracking-wider mb-1">Your Dedicated Advisor</p>
-            <h2 className="text-xl font-semibold">Kwame Mensah</h2>
-            <p className="text-navy-200 text-sm">Senior Wealth Manager</p>
+            <p className="text-navy-100 text-xs font-medium uppercase tracking-wider mb-1">Your Dedicated Advisor</p>
+            <h2 className="text-xl font-semibold">{advisor.name}</h2>
+            <p className="text-navy-200 text-sm">{advisor.role}</p>
+            <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1 text-xs text-slate-300">
+              <a href={`mailto:${advisor.email}`} className="hover:text-white underline transition-colors">
+                {advisor.email}
+              </a>
+              <span>&bull;</span>
+              <a href={`tel:${advisor.phone}`} className="hover:text-white underline transition-colors">
+                {advisor.phone}
+              </a>
+            </div>
           </div>
         </div>
         <div className="flex flex-col gap-2 w-full sm:w-auto">
-          <button onClick={() => showToast('Messaging prototype')} className="flex items-center justify-center gap-2 h-10 px-5 text-sm font-medium text-navy-900 bg-white rounded-md hover:bg-slate-50 transition-colors w-full">
-            <Envelope size={18} /> Message advisor
+          <button 
+            onClick={() => setIsMessageOpen(true)} 
+            className="flex items-center justify-center gap-2 h-10 px-5 text-sm font-medium text-navy-900 bg-white rounded-md hover:bg-slate-100 transition-colors w-full shadow-sm"
+          >
+            <Envelope size={18} weight="bold" /> Message advisor
           </button>
           <div className="flex gap-2">
-            <button onClick={() => showToast('Callback requested')} className="flex-1 flex items-center justify-center gap-2 h-10 px-4 text-sm font-medium text-white bg-white/10 border border-white/20 rounded-md hover:bg-white/20 transition-colors">
-              <Phone size={18} /> Call
+            <button 
+              onClick={() => setIsCallbackOpen(true)} 
+              className="flex-1 flex items-center justify-center gap-2 h-10 px-4 text-sm font-medium text-white bg-white/10 border border-white/20 rounded-md hover:bg-white/20 transition-colors"
+            >
+              <Phone size={18} weight="bold" /> Call
             </button>
-            <button onClick={() => showToast('Calendar prototype')} className="flex-1 flex items-center justify-center gap-2 h-10 px-4 text-sm font-medium text-white bg-white/10 border border-white/20 rounded-md hover:bg-white/20 transition-colors">
-              <Calendar size={18} /> Book
+            <button 
+              onClick={() => setIsCallbackOpen(true)} 
+              className="flex-1 flex items-center justify-center gap-2 h-10 px-4 text-sm font-medium text-white bg-white/10 border border-white/20 rounded-md hover:bg-white/20 transition-colors"
+            >
+              <Calendar size={18} weight="bold" /> Book
             </button>
           </div>
         </div>
@@ -142,6 +174,9 @@ export default function SupportPage() {
           </div>
         </div>
       </div>
+
+      <AdvisorMessageModal isOpen={isMessageOpen} onClose={() => setIsMessageOpen(false)} />
+      <AdvisorCallbackModal isOpen={isCallbackOpen} onClose={() => setIsCallbackOpen(false)} />
     </div>
   );
 }

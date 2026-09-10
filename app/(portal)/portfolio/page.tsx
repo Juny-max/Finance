@@ -7,23 +7,27 @@ import { Plus, ArrowUp, ArrowRight, Eye, EyeSlash } from "@phosphor-icons/react"
 import { motion } from "framer-motion";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import Link from "next/link";
+import InvestFlow from "@/components/flows/InvestFlow";
+import WithdrawFlow from "@/components/flows/WithdrawFlow";
 
-const COLORS = ["#0B192C", "#64748B", "#C4960A", "#10B981"];
+const COLORS = ["#0B192C", "#059669", "#C4960A", "#64748B"];
 
 export default function PortfolioPage() {
-  const { portfolio, balanceHidden, toggleBalance, showToast } = useStore();
+  const { funds, portfolio, balanceHidden, toggleBalance } = useStore();
   const [isMounted, setIsMounted] = useState(false);
   const [chartData, setChartData] = useState<any[]>([]);
   const [timeframe, setTimeframe] = useState("1Y");
+  const [isInvestOpen, setIsInvestOpen] = useState(false);
+  const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
-    setChartData(generateChartData("1Y"));
-  }, []);
+    setChartData(generateChartData("1Y", portfolio.summary.totalValue));
+  }, [portfolio.summary.totalValue]);
 
   const handleTimeframeChange = (tf: string) => {
     setTimeframe(tf);
-    setChartData(generateChartData(tf));
+    setChartData(generateChartData(tf, portfolio.summary.totalValue));
   };
 
   return (
@@ -51,14 +55,14 @@ export default function PortfolioPage() {
         </div>
         <div className="flex gap-3">
           <button 
-            onClick={() => showToast("Withdrawal flow opened")}
+            onClick={() => setIsWithdrawOpen(true)}
             className="h-10 px-5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-50 transition-colors flex items-center gap-2"
           >
             <ArrowUp size={16} weight="bold" />
             Withdraw
           </button>
           <button 
-            onClick={() => showToast("InvestFlow modal opened")}
+            onClick={() => setIsInvestOpen(true)}
             className="h-10 px-5 text-sm font-medium text-white bg-navy-900 rounded-md hover:bg-navy-800 transition-colors flex items-center gap-2"
           >
             <Plus size={16} weight="bold" />
@@ -183,41 +187,54 @@ export default function PortfolioPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {portfolio.holdings.map((holding) => (
-                <tr key={holding.fundId} className="hover:bg-slate-50/50 transition-colors group">
-                  <td className="px-6 py-4">
-                    <div className="font-medium text-slate-900">{holding.fundId.replace(/-/g, ' ')}</div>
-                  </td>
-                  <td className="px-6 py-4 text-right tabular-nums text-slate-600">
-                    {formatNumber(holding.units)}
-                  </td>
-                  <td className="px-6 py-4 text-right tabular-nums font-medium text-slate-900">
-                    {formatMasked(holding.currentValue, balanceHidden)}
-                  </td>
-                  <td className="px-6 py-4 text-right tabular-nums">
-                    <span className={holding.gainLoss >= 0 ? "text-emerald-600" : "text-red-500"}>
-                      {holding.gainLoss >= 0 ? "+" : ""}{formatMasked(holding.gainLoss, balanceHidden)}
-                      <span className="text-xs ml-1 opacity-80">({holding.gainLoss >= 0 ? "+" : ""}{formatPercent(holding.gainLossPercent)})</span>
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right tabular-nums text-slate-600">
-                    {formatPercent(holding.allocation)}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <Link 
-                      href={`/funds/${holding.fundId}`}
-                      className="inline-flex items-center justify-center p-2 text-slate-400 hover:text-navy-900 hover:bg-slate-100 rounded-md transition-colors opacity-0 group-hover:opacity-100"
-                    >
-                      <ArrowRight size={16} weight="bold" />
-                    </Link>
-                  </td>
-                </tr>
-              ))}
+              {portfolio.holdings.map((holding, i) => {
+                const normId = holding.fundId.replace(/^(aura|bora)-/, "");
+                const fund = funds.find(f => f.id === holding.fundId || f.id.replace(/^(aura|bora)-/, "") === normId);
+                const fundName = fund?.name || holding.fundName || holding.fundId;
+                const color = fund?.color || COLORS[i % COLORS.length];
+
+                return (
+                  <tr key={holding.fundId} className="hover:bg-slate-50/50 transition-colors group">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                        <span className="font-medium text-slate-900">{fundName}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-right tabular-nums text-slate-600">
+                      {formatNumber(holding.units)}
+                    </td>
+                    <td className="px-6 py-4 text-right tabular-nums font-medium text-slate-900">
+                      {formatMasked(holding.currentValue, balanceHidden)}
+                    </td>
+                    <td className="px-6 py-4 text-right tabular-nums">
+                      <span className={holding.gainLoss >= 0 ? "text-emerald-600" : "text-red-500"}>
+                        {holding.gainLoss >= 0 ? "+" : ""}{formatMasked(holding.gainLoss, balanceHidden)}
+                        <span className="text-xs ml-1 opacity-80">({formatPercent(holding.gainLossPercent)})</span>
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right tabular-nums text-slate-600 font-medium">
+                      {holding.allocation.toFixed(1)}%
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <Link 
+                        href={`/funds/${holding.fundId}`}
+                        className="inline-flex items-center justify-center p-2 text-slate-400 hover:text-navy-900 hover:bg-slate-100 rounded-md transition-colors opacity-0 group-hover:opacity-100"
+                        title="View fund details"
+                      >
+                        <ArrowRight size={16} weight="bold" />
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       </div>
 
+      <InvestFlow isOpen={isInvestOpen} onClose={() => setIsInvestOpen(false)} />
+      <WithdrawFlow isOpen={isWithdrawOpen} onClose={() => setIsWithdrawOpen(false)} />
     </motion.div>
   );
 }

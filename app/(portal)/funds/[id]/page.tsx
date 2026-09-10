@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import InvestFlow from "@/components/flows/InvestFlow";
 
 export default function FundDetailPage() {
   const params = useParams();
@@ -17,6 +18,7 @@ export default function FundDetailPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [chartData, setChartData] = useState<any[]>([]);
   const [timeframe, setTimeframe] = useState("1Y");
+  const [isInvestOpen, setIsInvestOpen] = useState(false);
 
   const fund = funds.find(f => f.id === fundId);
 
@@ -68,7 +70,7 @@ export default function FundDetailPage() {
           <p className="text-slate-600 max-w-2xl">{fund.objective}</p>
         </div>
         <button 
-          onClick={() => showToast(`Opening invest flow for ${fund.name}`)}
+          onClick={() => setIsInvestOpen(true)}
           className="shrink-0 h-10 px-6 text-sm font-medium text-white bg-navy-900 rounded-md hover:bg-navy-800 transition-colors"
         >
           Invest in this fund
@@ -251,13 +253,18 @@ export default function FundDetailPage() {
       <div className="mt-8 pt-8 border-t border-slate-200/60 text-center">
         <h3 className="text-xl font-light text-slate-900 mb-4">Ready to invest in {fund.name}?</h3>
         <button 
-          onClick={() => showToast(`Opening invest flow for ${fund.name}`)}
+          onClick={() => setIsInvestOpen(true)}
           className="h-12 px-8 text-sm font-medium text-white bg-navy-900 rounded-md hover:bg-navy-800 transition-colors inline-flex items-center justify-center"
         >
           Invest Now
         </button>
       </div>
 
+      <InvestFlow 
+        isOpen={isInvestOpen} 
+        onClose={() => setIsInvestOpen(false)} 
+        preselectedFundId={fund.id} 
+      />
     </motion.div>
   );
 }

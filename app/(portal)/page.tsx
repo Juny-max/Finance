@@ -6,29 +6,41 @@ import { useStore, generateChartData } from "@/lib/store";
 import { formatGHS, formatMasked, formatPercent, getGreeting, formatDate } from "@/lib/formatters";
 import { 
   Plus, ArrowUp, ArrowsLeftRight, FileText, 
-  Eye, EyeSlash, Coins, ArrowRight
+  Eye, EyeSlash, Coins, ArrowRight, Envelope, Phone
 } from "@phosphor-icons/react";
 import { motion } from "framer-motion";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import Link from "next/link";
+import InvestFlow from "@/components/flows/InvestFlow";
+import WithdrawFlow from "@/components/flows/WithdrawFlow";
+import SwitchFlow from "@/components/flows/SwitchFlow";
+import { AdvisorMessageModal } from "@/components/advisor/AdvisorMessageModal";
+import { AdvisorCallbackModal } from "@/components/advisor/AdvisorCallbackModal";
 
-const COLORS = ["#0B192C", "#64748B", "#C4960A", "#10B981"];
+const COLORS = ["#0B192C", "#059669", "#C4960A", "#64748B"];
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { portfolio, balanceHidden, toggleBalance, showToast, transactions } = useStore();
+  const { funds, portfolio, balanceHidden, toggleBalance, transactions } = useStore();
   const [isMounted, setIsMounted] = useState(false);
   const [chartData, setChartData] = useState<any[]>([]);
   const [timeframe, setTimeframe] = useState("1Y");
 
+  // Modal states
+  const [isInvestOpen, setIsInvestOpen] = useState(false);
+  const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
+  const [isSwitchOpen, setIsSwitchOpen] = useState(false);
+  const [isMessageAdvisorOpen, setIsMessageAdvisorOpen] = useState(false);
+  const [isCallbackOpen, setIsCallbackOpen] = useState(false);
+
   useEffect(() => {
     setIsMounted(true);
-    setChartData(generateChartData("1Y"));
-  }, []);
+    setChartData(generateChartData("1Y", portfolio.summary.totalValue));
+  }, [portfolio.summary.totalValue]);
 
   const handleTimeframeChange = (tf: string) => {
     setTimeframe(tf);
-    setChartData(generateChartData(tf));
+    setChartData(generateChartData(tf, portfolio.summary.totalValue));
   };
 
   const recentTransactions = transactions.slice(0, 5);
@@ -105,30 +117,30 @@ export default function DashboardPage() {
       {/* 3. QUICK ACTIONS */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <button 
-          onClick={() => showToast("InvestFlow modal would open here")}
-          className="flex flex-col items-center justify-center gap-3 p-4 bg-white border border-slate-200/60 rounded-lg hover:bg-slate-50 transition-colors"
+          onClick={() => setIsInvestOpen(true)}
+          className="flex flex-col items-center justify-center gap-3 p-4 bg-white border border-slate-200/60 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all text-left group"
         >
-          <div className="h-10 w-10 rounded-full bg-navy-50 flex items-center justify-center text-navy-900">
+          <div className="h-10 w-10 rounded-full bg-navy-50 group-hover:bg-navy-100 flex items-center justify-center text-navy-900 transition-colors">
             <Plus size={20} weight="bold" />
           </div>
           <span className="text-xs font-medium text-slate-700">Add funds</span>
         </button>
         
         <button 
-          onClick={() => showToast("Withdrawal flow would open here")}
-          className="flex flex-col items-center justify-center gap-3 p-4 bg-white border border-slate-200/60 rounded-lg hover:bg-slate-50 transition-colors"
+          onClick={() => setIsWithdrawOpen(true)}
+          className="flex flex-col items-center justify-center gap-3 p-4 bg-white border border-slate-200/60 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all text-left group"
         >
-          <div className="h-10 w-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-700">
+          <div className="h-10 w-10 rounded-full bg-slate-50 group-hover:bg-slate-100 flex items-center justify-center text-slate-700 transition-colors">
             <ArrowUp size={20} weight="bold" />
           </div>
           <span className="text-xs font-medium text-slate-700">Withdraw</span>
         </button>
 
         <button 
-          onClick={() => showToast("Switch funds flow would open here")}
-          className="flex flex-col items-center justify-center gap-3 p-4 bg-white border border-slate-200/60 rounded-lg hover:bg-slate-50 transition-colors"
+          onClick={() => setIsSwitchOpen(true)}
+          className="flex flex-col items-center justify-center gap-3 p-4 bg-white border border-slate-200/60 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all text-left group"
         >
-          <div className="h-10 w-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-700">
+          <div className="h-10 w-10 rounded-full bg-slate-50 group-hover:bg-slate-100 flex items-center justify-center text-slate-700 transition-colors">
             <ArrowsLeftRight size={20} weight="bold" />
           </div>
           <span className="text-xs font-medium text-slate-700">Switch fund</span>
@@ -136,9 +148,9 @@ export default function DashboardPage() {
 
         <Link 
           href="/statements"
-          className="flex flex-col items-center justify-center gap-3 p-4 bg-white border border-slate-200/60 rounded-lg hover:bg-slate-50 transition-colors"
+          className="flex flex-col items-center justify-center gap-3 p-4 bg-white border border-slate-200/60 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all text-left group"
         >
-          <div className="h-10 w-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-700">
+          <div className="h-10 w-10 rounded-full bg-slate-50 group-hover:bg-slate-100 flex items-center justify-center text-slate-700 transition-colors">
             <FileText size={20} weight="bold" />
           </div>
           <span className="text-xs font-medium text-slate-700">Statement</span>
@@ -249,45 +261,90 @@ export default function DashboardPage() {
       {/* 5. WHERE YOUR MONEY IS INVESTED */}
       <div className="grid md:grid-cols-2 gap-8 items-center bg-white border border-slate-200/60 rounded-lg p-6">
         <div>
-          <h3 className="text-lg font-semibold text-slate-900 mb-6">Where your money is invested</h3>
-          <div className="space-y-4">
-            {portfolio.holdings.map((holding, i) => (
-              <div key={holding.fundId} className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
-                  <span className="text-sm font-medium text-slate-700">{holding.fundId.replace(/-/g, ' ')}</span>
-                </div>
-                <div className="flex items-center gap-6">
-                  <span className="text-sm text-slate-600 tabular-nums">
-                    {formatMasked(holding.currentValue, balanceHidden)}
-                  </span>
-                  <span className="text-sm text-slate-500 tabular-nums w-12 text-right">
-                    {formatPercent(holding.allocation)}
-                  </span>
-                </div>
-              </div>
-            ))}
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-slate-900">Where your money is invested</h3>
+            <Link href="/portfolio" className="text-xs text-navy-900 font-medium hover:underline">
+              View details &rarr;
+            </Link>
           </div>
+
+          {portfolio.holdings.length === 0 ? (
+            <div className="py-8 text-center bg-slate-50 rounded-lg">
+              <p className="text-sm text-slate-500">No active fund holdings recorded yet.</p>
+              <button 
+                onClick={() => setIsInvestOpen(true)}
+                className="mt-2 text-xs font-medium text-navy-900 underline"
+              >
+                Start your first investment &rarr;
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {portfolio.holdings.map((holding, i) => {
+                const normId = holding.fundId.replace(/^(aura|bora)-/, "");
+                const fund = funds.find(f => f.id === holding.fundId || f.id.replace(/^(aura|bora)-/, "") === normId);
+                const shortName = fund?.shortName || fund?.name || holding.fundName || holding.fundId;
+                const fullName = fund?.name || holding.fundName || holding.fundId;
+                const color = fund?.color || COLORS[i % COLORS.length];
+
+                return (
+                  <div key={holding.fundId} className="flex items-center justify-between group">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                      <Link 
+                        href={`/funds/${holding.fundId}`}
+                        className="text-sm font-medium text-slate-800 hover:text-navy-900 truncate transition-colors hover:underline"
+                        title={fullName}
+                      >
+                        {shortName}
+                      </Link>
+                    </div>
+                    <div className="flex items-center gap-6 shrink-0">
+                      <span className="text-sm text-slate-700 tabular-nums font-medium">
+                        {formatMasked(holding.currentValue, balanceHidden)}
+                      </span>
+                      <span className="text-sm text-slate-500 tabular-nums w-14 text-right">
+                        {holding.allocation.toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
-        <div className="h-[240px]">
-          {isMounted && (
+
+        <div className="h-[240px] flex items-center justify-center">
+          {isMounted && portfolio.holdings.length > 0 && (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={portfolio.holdings}
-                  innerRadius={70}
+                  data={portfolio.holdings.map((h, i) => {
+                    const normId = h.fundId.replace(/^(aura|bora)-/, "");
+                    const fund = funds.find(f => f.id === h.fundId || f.id.replace(/^(aura|bora)-/, "") === normId);
+                    return {
+                      name: fund?.shortName || fund?.name || h.fundName || h.fundId,
+                      allocation: h.allocation,
+                      color: fund?.color || COLORS[i % COLORS.length],
+                    };
+                  })}
+                  innerRadius={68}
                   outerRadius={95}
-                  paddingAngle={2}
+                  paddingAngle={3}
                   dataKey="allocation"
+                  nameKey="name"
                   stroke="none"
                 >
-                  {portfolio.holdings.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
+                  {portfolio.holdings.map((holding, index) => {
+                    const normId = holding.fundId.replace(/^(aura|bora)-/, "");
+                    const fund = funds.find(f => f.id === holding.fundId || f.id.replace(/^(aura|bora)-/, "") === normId);
+                    const color = fund?.color || COLORS[index % COLORS.length];
+                    return <Cell key={`pie-cell-${index}`} fill={color} />;
+                  })}
                 </Pie>
                 <Tooltip 
-                  formatter={(value: number) => [`${value}%`, 'Allocation']}
-                  contentStyle={{ borderRadius: "8px", border: "1px solid #E2E8F0" }}
+                  formatter={(value: any, name: any) => [`${Number(value).toFixed(1)}% allocation`, name]}
+                  contentStyle={{ borderRadius: "8px", border: "1px solid #E2E8F0", boxShadow: "0 2px 4px rgba(0,0,0,0.05)" }}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -311,7 +368,9 @@ export default function DashboardPage() {
                   {getTransactionIcon(tx.type)}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-900 capitalize">{tx.type} — {tx.fundId.replace(/-/g, ' ')}</p>
+                  <p className="text-sm font-medium text-slate-900 capitalize">
+                    {tx.type} — {tx.fundName || tx.fundId.replace(/^(aura|bora)-/, "").replace(/-/g, ' ')}
+                  </p>
                   <p className="text-xs text-slate-500 mt-0.5">{formatDate(tx.date)}</p>
                 </div>
               </div>
@@ -319,7 +378,7 @@ export default function DashboardPage() {
                 <p className="text-sm font-medium text-slate-900 tabular-nums">
                   {tx.type === "investment" || tx.type === "dividend" ? "+" : "-"}{formatMasked(tx.amount, balanceHidden)}
                 </p>
-                <p className={`text-xs mt-0.5 ${tx.status === "completed" ? "text-emerald-600" : "text-amber-600"}`}>
+                <p className={`text-xs mt-0.5 ${tx.status === "completed" ? "text-emerald-600 font-medium" : "text-amber-600 font-medium"}`}>
                   {tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}
                 </p>
               </div>
@@ -329,38 +388,69 @@ export default function DashboardPage() {
       </div>
 
       {/* 7. YOUR ADVISOR */}
-      <div className="bg-slate-50 border border-slate-200/60 rounded-lg p-6 flex flex-col md:flex-row items-center justify-between gap-6">
-        <div>
-          <h3 className="text-sm font-medium text-slate-500 uppercase tracking-wide">Your relationship manager</h3>
-          <p className="text-lg font-semibold text-slate-900 mt-1">Sarah Osei-Bonsu</p>
-          <p className="text-sm text-slate-600">Senior Wealth Advisor</p>
-          <div className="flex gap-4 mt-2 text-sm text-slate-600">
-            <span>s.osei-bonsu@auraasset.com</span>
-            <span>+233 24 123 4567</span>
+      {(() => {
+        const advisor = user?.advisor || {
+          name: "Ama Serwaa Boateng",
+          role: "Senior Relationship Manager",
+          email: "ama.boateng@auraasset.com",
+          phone: "+233 30 277 4839"
+        };
+        const initials = advisor.name.split(" ").map(n => n[0]).slice(0, 2).join("");
+
+        return (
+          <div className="bg-slate-50 border border-slate-200/60 rounded-lg p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-navy-900 text-white flex items-center justify-center font-medium text-base shrink-0 shadow-sm">
+                {initials}
+              </div>
+              <div>
+                <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider">Your Relationship Manager</h3>
+                <p className="text-base font-semibold text-slate-900 mt-0.5">{advisor.name}</p>
+                <p className="text-xs text-slate-600">{advisor.role}</p>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-xs text-slate-500">
+                  <a href={`mailto:${advisor.email}`} className="hover:text-navy-900 underline transition-colors">
+                    {advisor.email}
+                  </a>
+                  <span>&bull;</span>
+                  <a href={`tel:${advisor.phone}`} className="hover:text-navy-900 underline transition-colors">
+                    {advisor.phone}
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-3 w-full md:w-auto">
+              <button 
+                onClick={() => setIsMessageAdvisorOpen(true)}
+                className="flex-1 md:flex-none h-10 px-5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-100 hover:border-slate-300 transition-all flex items-center justify-center gap-2 shadow-sm"
+              >
+                <Envelope size={16} weight="bold" />
+                Message
+              </button>
+              <button 
+                onClick={() => setIsCallbackOpen(true)}
+                className="flex-1 md:flex-none h-10 px-5 text-sm font-medium text-white bg-navy-900 rounded-md hover:bg-navy-800 transition-colors flex items-center justify-center gap-2 shadow-sm"
+              >
+                <Phone size={16} weight="bold" />
+                Request callback
+              </button>
+            </div>
           </div>
-        </div>
-        <div className="flex gap-3 w-full md:w-auto">
-          <button 
-            onClick={() => showToast("Message advisor opened")}
-            className="flex-1 md:flex-none h-10 px-5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-50 transition-colors"
-          >
-            Message
-          </button>
-          <button 
-            onClick={() => showToast("Callback requested")}
-            className="flex-1 md:flex-none h-10 px-5 text-sm font-medium text-white bg-navy-900 rounded-md hover:bg-navy-800 transition-colors"
-          >
-            Request callback
-          </button>
-        </div>
-      </div>
+        );
+      })()}
 
       {/* 8. FOOTER DISCLAIMER */}
-      <div className="pt-8 text-center">
+      <div className="pt-4 text-center">
         <p className="text-xs text-slate-400 italic max-w-3xl mx-auto">
           Illustrative data for demonstration purposes only. Investment values and returns shown are not live market data and should not be interpreted as investment advice or guaranteed performance.
         </p>
       </div>
+
+      {/* MODALS */}
+      <InvestFlow isOpen={isInvestOpen} onClose={() => setIsInvestOpen(false)} />
+      <WithdrawFlow isOpen={isWithdrawOpen} onClose={() => setIsWithdrawOpen(false)} />
+      <SwitchFlow isOpen={isSwitchOpen} onClose={() => setIsSwitchOpen(false)} />
+      <AdvisorMessageModal isOpen={isMessageAdvisorOpen} onClose={() => setIsMessageAdvisorOpen(false)} />
+      <AdvisorCallbackModal isOpen={isCallbackOpen} onClose={() => setIsCallbackOpen(false)} />
     </motion.div>
   );
 }
