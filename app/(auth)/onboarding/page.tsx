@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -16,21 +15,6 @@ export default function OnboardingPage() {
 
   return (
     <div className="w-full max-w-lg mx-auto py-12">
-      {/* Mobile Branding Header */}
-      <div className="lg:hidden flex items-center gap-3 mb-8">
-        <Image
-          src="/logo-without text.png"
-          alt="Aura Asset Management"
-          width={36}
-          height={36}
-          className="w-9 h-9 object-contain"
-        />
-        <div>
-          <div className="text-sm font-semibold text-navy-900 tracking-wider">AURA ASSET MANAGEMENT</div>
-          <div className="text-[10px] text-slate-500 uppercase tracking-widest font-medium">Account Onboarding</div>
-        </div>
-      </div>
-
       {/* Progress Bar */}
       <div className="mb-8">
         <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
