@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Eye, EyeSlash } from '@phosphor-icons/react';
+import { Eye, EyeSlash, CircleNotch } from '@phosphor-icons/react';
 // import { useAuth } from '@/lib/auth'; // In a real app this would be used
 
 export default function SignupPage() {
@@ -16,6 +16,7 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,8 +24,10 @@ export default function SignupPage() {
       alert("Passwords don't match");
       return;
     }
-    // signup(email, password, firstName, lastName);
-    router.push('/');
+    setIsLoading(true);
+    setTimeout(() => {
+      router.push('/');
+    }, 400);
   };
 
   return (
@@ -114,9 +117,17 @@ export default function SignupPage() {
 
         <button
           type="submit"
-          className="w-full h-10 px-5 text-sm font-medium text-white bg-navy-900 rounded-md hover:bg-navy-800 transition-colors"
+          disabled={isLoading}
+          className="w-full h-10 px-5 text-sm font-medium text-white bg-navy-900 rounded-md hover:bg-navy-800 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-85 cursor-pointer disabled:cursor-not-allowed shadow-sm"
         >
-          Create account
+          {isLoading ? (
+            <>
+              <CircleNotch size={18} weight="bold" className="animate-spin text-gold-400" />
+              <span>Creating account...</span>
+            </>
+          ) : (
+            <span>Create account</span>
+          )}
         </button>
       </form>
 

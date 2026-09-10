@@ -2,14 +2,20 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { CircleNotch } from '@phosphor-icons/react';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      setSubmitted(true);
+    }, 450);
   };
 
   return (
@@ -41,9 +47,17 @@ export default function ForgotPasswordPage() {
 
           <button
             type="submit"
-            className="w-full h-10 px-5 text-sm font-medium text-white bg-navy-900 rounded-md hover:bg-navy-800 transition-colors"
+            disabled={isLoading}
+            className="w-full h-10 px-5 text-sm font-medium text-white bg-navy-900 rounded-md hover:bg-navy-800 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-85 cursor-pointer disabled:cursor-not-allowed shadow-sm"
           >
-            Send reset link
+            {isLoading ? (
+              <>
+                <CircleNotch size={18} weight="bold" className="animate-spin text-gold-400" />
+                <span>Sending link...</span>
+              </>
+            ) : (
+              <span>Send reset link</span>
+            )}
           </button>
         </form>
       )}

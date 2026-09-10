@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Eye, EyeSlash } from '@phosphor-icons/react';
+import { Eye, EyeSlash, CircleNotch, CheckCircle } from '@phosphor-icons/react';
 import { useAuth } from '@/lib/auth';
 
 export default function LoginPage() {
@@ -13,6 +13,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedDemo, setSelectedDemo] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,21 +25,23 @@ export default function LoginPage() {
       return;
     }
     
+    setIsLoading(true);
     try {
       login(email, password);
-      router.push('/');
+      setTimeout(() => {
+        router.push('/');
+      }, 350);
     } catch (err) {
+      setIsLoading(false);
       setError('Login failed. Please check your credentials.');
     }
   };
 
-  const handleQuickLogin = (email: string, pass: string) => {
-    try {
-      login(email, pass);
-      router.push('/');
-    } catch (err) {
-      setError('Demo login failed.');
-    }
+  const handleFillDemo = (demoEmail: string, demoPassword: string) => {
+    setEmail(demoEmail);
+    setPassword(demoPassword);
+    setError('');
+    setSelectedDemo(demoEmail);
   };
 
   return (
@@ -59,7 +63,10 @@ export default function LoginPage() {
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setSelectedDemo(null);
+            }}
             className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-navy-900/10 focus:border-navy-900 transition-colors"
             placeholder="you@example.com"
           />
@@ -71,7 +78,10 @@ export default function LoginPage() {
             <input
               type={showPassword ? 'text' : 'password'}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setSelectedDemo(null);
+              }}
               className="h-10 w-full pl-3 pr-10 text-sm border border-slate-200 rounded-md bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-navy-900/10 focus:border-navy-900 transition-colors"
               placeholder="••••••••"
             />
@@ -97,9 +107,17 @@ export default function LoginPage() {
 
         <button
           type="submit"
-          className="w-full h-10 px-5 text-sm font-medium text-white bg-navy-900 rounded-md hover:bg-navy-800 transition-colors"
+          disabled={isLoading}
+          className="w-full h-10 px-5 text-sm font-medium text-white bg-navy-900 rounded-md hover:bg-navy-800 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-85 cursor-pointer disabled:cursor-not-allowed shadow-sm"
         >
-          Sign in
+          {isLoading ? (
+            <>
+              <CircleNotch size={18} weight="bold" className="animate-spin text-gold-400" />
+              <span>Signing in...</span>
+            </>
+          ) : (
+            <span>Sign in</span>
+          )}
         </button>
       </form>
 
@@ -110,30 +128,63 @@ export default function LoginPage() {
         </Link>
       </div>
 
-      <div className="mt-12">
+      <div className="mt-10">
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-slate-200"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-slate-500">Demo accounts</span>
+            <span className="px-3 bg-white text-slate-500 text-xs font-medium uppercase tracking-wider">Demo accounts</span>
           </div>
         </div>
         
-        <div className="mt-6 space-y-3">
+        <p className="text-xs text-slate-400 text-center mt-2 mb-4">Tap an account to autofill credentials into the form:</p>
+
+        <div className="space-y-2.5">
           <button
-            onClick={() => handleQuickLogin('kwame@example.com', 'demo1234')}
-            className="w-full flex justify-between items-center px-4 py-2 text-sm border border-slate-200 rounded-md hover:bg-slate-50 transition-colors"
+            type="button"
+            onClick={() => handleFillDemo('kwame@example.com', 'demo1234')}
+            className={`w-full flex justify-between items-center px-4 py-2.5 text-sm border rounded-md transition-all active:scale-[0.99] text-left ${
+              selectedDemo === 'kwame@example.com'
+                ? 'border-gold-500 bg-gold-50/40 text-navy-900 ring-1 ring-gold-400'
+                : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+            }`}
           >
-            <span className="font-medium text-slate-900">Kwame Mensah</span>
-            <span className="text-slate-500">Individual</span>
+            <div>
+              <span className="font-medium text-slate-900 block">Kwame Mensah</span>
+              <span className="text-xs text-slate-500">kwame@example.com</span>
+            </div>
+            {selectedDemo === 'kwame@example.com' ? (
+              <span className="text-xs font-semibold text-gold-700 flex items-center gap-1 bg-gold-100/60 px-2 py-0.5 rounded">
+                <CheckCircle size={14} weight="fill" className="text-gold-600" />
+                Filled
+              </span>
+            ) : (
+              <span className="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded">Individual</span>
+            )}
           </button>
+
           <button
-            onClick={() => handleQuickLogin('trustees@gcbprovident.com', 'demo1234')}
-            className="w-full flex justify-between items-center px-4 py-2 text-sm border border-slate-200 rounded-md hover:bg-slate-50 transition-colors"
+            type="button"
+            onClick={() => handleFillDemo('trustees@gcbprovident.com', 'demo1234')}
+            className={`w-full flex justify-between items-center px-4 py-2.5 text-sm border rounded-md transition-all active:scale-[0.99] text-left ${
+              selectedDemo === 'trustees@gcbprovident.com'
+                ? 'border-gold-500 bg-gold-50/40 text-navy-900 ring-1 ring-gold-400'
+                : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+            }`}
           >
-            <span className="font-medium text-slate-900">GCB Staff Provident</span>
-            <span className="text-slate-500">Institutional</span>
+            <div>
+              <span className="font-medium text-slate-900 block">GCB Staff Provident</span>
+              <span className="text-xs text-slate-500">trustees@gcbprovident.com</span>
+            </div>
+            {selectedDemo === 'trustees@gcbprovident.com' ? (
+              <span className="text-xs font-semibold text-gold-700 flex items-center gap-1 bg-gold-100/60 px-2 py-0.5 rounded">
+                <CheckCircle size={14} weight="fill" className="text-gold-600" />
+                Filled
+              </span>
+            ) : (
+              <span className="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded">Institutional</span>
+            )}
           </button>
         </div>
       </div>
