@@ -5,7 +5,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 [![License: SEC Ghana Compliant Prototype](https://img.shields.io/badge/Regulated-SEC_Ghana_Compliant-0B192C?style=flat-square)](https://sec.gov.gh/)
 
-**Aura Wealth Portal** is an institutional-grade client portal and investment management platform engineered for **Aura Asset Management Limited**, a licensed investment adviser and fund manager operating in Accra, Ghana.
+**Aura Wealth Portal** is an institutional-grade client portal and investment management platform engineered for **Aura Asset Management Limited**.
 
 Designed with a private banking aesthetic, the platform communicates **Trust, Precision, Security, and Institutional Intelligence**—moving away from generic SaaS dashboard patterns to deliver a calm, restrained wealth management experience tailored to both private high-net-worth clients and institutional pension schemes.
 
