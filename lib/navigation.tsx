@@ -51,3 +51,4 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
 export function useNavigationState() {
   return useContext(NavigationContext);
 }
+

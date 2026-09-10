@@ -16,7 +16,6 @@ import {
   UserCircle,
   CircleNotch
 } from '@phosphor-icons/react';
-import { useAuth } from '@/lib/auth';
 import { useNavigationState } from '@/lib/navigation';
 
 const NAV_ITEMS = [
@@ -37,7 +36,6 @@ const BOTTOM_NAV_ITEMS = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { isDemoMode, switchPersona, users, user } = useAuth();
   const { pendingHref, startNavigation } = useNavigationState();
 
   return (
@@ -131,32 +129,6 @@ export function Sidebar() {
           })}
         </ul>
       </nav>
-
-      {/* Demo Mode Switcher */}
-      {isDemoMode && (
-        <div className="p-4 border-t border-slate-200/60 bg-slate-50">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">
-              Demo Mode
-            </span>
-          </div>
-          <div className="flex flex-col gap-2">
-            {users.map(u => (
-              <button
-                key={u.id}
-                onClick={() => switchPersona(u.id)}
-                className={`text-xs p-1.5 rounded text-left transition-colors ${
-                  user?.id === u.id 
-                    ? 'bg-navy-900 text-white font-medium' 
-                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
-                }`}
-              >
-                {u.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
     </aside>
   );
 }

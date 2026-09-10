@@ -67,3 +67,4 @@ export function SkeletonTable({ rows = 5, cols = 5 }: { rows?: number; cols?: nu
     </div>
   );
 }
+
