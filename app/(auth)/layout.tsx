@@ -9,13 +9,15 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       {/* Left side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 bg-navy-900 flex-col justify-center px-16 relative overflow-hidden">
         <div className="relative z-10 max-w-md">
-          <div className="mb-12">
-            <div className="text-white font-semibold tracking-wider text-base">
-              AURA ASSET MANAGEMENT
-            </div>
-            <div className="text-[10px] text-gold-400 uppercase tracking-widest font-medium mt-1">
-              Private Wealth & Advisory
-            </div>
+          <div className="mb-10">
+            <Image
+              src="/logo-withtext-light.png"
+              alt="Aura Asset Management"
+              width={260}
+              height={223}
+              className="w-64 h-auto object-contain"
+              priority
+            />
           </div>
           <h1 className="text-4xl text-white font-light leading-tight mb-6">
             Your portfolio. Your investments. Your financial future.
