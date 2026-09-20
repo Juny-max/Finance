@@ -17,7 +17,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col w-full lg:ml-64">
+      <div className="flex-1 flex flex-col w-full lg:ml-60">
         <AdminTopBar />
 
         <main className="flex-1 overflow-y-auto bg-slate-50">

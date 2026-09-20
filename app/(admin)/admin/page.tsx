@@ -21,9 +21,9 @@ export default function AdminOverviewPage() {
     <div className="space-y-6">
       {/* Page Header */}
       <div className="mb-6">
-        <h1 className="text-xl font-semibold text-slate-900">Operations Overview</h1>
+        <h1 className="text-xl font-semibold text-slate-900">Overview</h1>
         <p className="text-sm text-slate-500 mt-1">
-          Good morning, Audrey. Here&apos;s what needs your attention.
+          Good morning, Audrey. Here is what needs your attention today.
         </p>
       </div>
 

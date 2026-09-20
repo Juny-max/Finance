@@ -1,12 +1,15 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { MagnifyingGlass, Bell, ArrowSquareOut } from '@phosphor-icons/react';
+import { useRouter } from 'next/navigation';
+import { MagnifyingGlass, Bell, SignOut } from '@phosphor-icons/react';
 import { useStore } from '@/lib/store';
+import { useAuth } from '@/lib/auth';
 
 export function AdminTopBar() {
+  const router = useRouter();
   const { applications, allTransactions } = useStore();
+  const { logout } = useAuth();
 
   const pendingApps = applications.filter((a) => a.status === 'pending_review').length;
   const pendingTxns = allTransactions.filter(
@@ -14,13 +17,18 @@ export function AdminTopBar() {
   ).length;
   const totalActionItems = pendingApps + pendingTxns;
 
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
+
   return (
-    <header className="h-14 bg-white border-b border-slate-200/60 flex items-center justify-between px-6 sticky top-0 z-20">
+    <header className="h-14 bg-white border-b border-slate-200/60 flex items-center justify-between px-6 sticky top-0 z-10">
       {/* Left: Section Label */}
-      <span className="text-sm text-slate-500">Operations Desk</span>
+      <span className="text-sm font-medium text-slate-700">Admin Console</span>
 
       {/* Right Side Controls */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3.5">
         {/* Search */}
         <div className="relative hidden md:block">
           <MagnifyingGlass
@@ -30,29 +38,35 @@ export function AdminTopBar() {
           />
           <input
             type="text"
-            placeholder="Search clients, refs..."
-            className="h-8 w-48 pl-8 pr-3 text-xs border border-slate-200 rounded-md bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-navy-900 focus:border-navy-900 transition-colors"
+            placeholder="Search..."
+            className="h-8 w-44 pl-8 pr-3 text-xs border border-slate-200 rounded-md bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-navy-900 focus:border-navy-900 transition-colors"
           />
         </div>
 
         {/* Notification Bell */}
-        <button className="relative p-1 text-slate-500 hover:text-slate-700 transition-colors">
+        <button
+          className="relative p-1.5 text-slate-500 hover:text-slate-800 transition-colors"
+          title="Pending actions"
+        >
           <Bell size={18} weight="bold" />
           {totalActionItems > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 flex items-center justify-center bg-red-500 text-white text-[10px] font-semibold rounded-full px-1 leading-none">
+            <span className="absolute 0.5 top-0.5 right-0.5 min-w-[15px] h-3.5 flex items-center justify-center bg-red-500 text-white text-[9px] font-semibold rounded-full px-1 leading-none">
               {totalActionItems}
             </span>
           )}
         </button>
 
-        {/* Client Portal Link */}
-        <Link
-          href="/"
-          className="flex items-center gap-1 text-xs text-navy-900 hover:text-navy-800 transition-colors"
+        <div className="h-4 w-px bg-slate-200" />
+
+        {/* Standard Sign Out Button */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-red-600 px-2.5 py-1.5 rounded-md hover:bg-slate-50 transition-colors"
+          title="Sign out of admin session"
         >
-          <ArrowSquareOut size={14} weight="bold" />
-          <span>Client Portal</span>
-        </Link>
+          <SignOut size={15} weight="bold" />
+          <span>Sign out</span>
+        </button>
       </div>
     </header>
   );

@@ -1,5 +1,5 @@
 'use client';
-import { UserCircle, MapPin, Phone, Envelope, Bank, DeviceMobile, ShieldCheck } from '@phosphor-icons/react';
+import { UserCircle, MapPin, Phone, Envelope, Bank, DeviceMobile, ShieldCheck, Clock, XCircle } from '@phosphor-icons/react';
 import { useAuth } from '@/lib/auth';
 import { useStore } from '@/lib/store';
 
@@ -71,10 +71,22 @@ export default function ProfilePage() {
             </div>
             <div>
               <p className="text-slate-500 mb-1">KYC Status</p>
-              <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded w-max mt-0.5">
-                <ShieldCheck size={14} weight="bold" />
-                <span className="text-xs font-medium">Verified</span>
-              </div>
+              {user?.kycStatus === 'verified' ? (
+                <div className="flex items-center gap-1.5 text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded text-xs font-medium w-max mt-0.5">
+                  <ShieldCheck size={14} weight="bold" />
+                  <span>Verified</span>
+                </div>
+              ) : user?.kycStatus === 'rejected' ? (
+                <div className="flex items-center gap-1.5 text-red-700 bg-red-50 border border-red-200/60 px-2 py-0.5 rounded text-xs font-medium w-max mt-0.5">
+                  <XCircle size={14} weight="bold" />
+                  <span>Verification Declined</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5 text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded text-xs font-medium w-max mt-0.5">
+                  <Clock size={14} weight="bold" />
+                  <span>Pending Review</span>
+                </div>
+              )}
             </div>
             <div>
               <p className="text-slate-500 mb-1">Member Since</p>

@@ -27,7 +27,7 @@ export default function AdminClientsPage() {
     riskProfile: u.riskProfile,
     kycStatus: u.kycStatus,
     joinDate: u.joinDate,
-    advisor: u.advisor?.name || 'Aura Institutional Desk',
+    advisor: u.advisor?.name || 'Aura Advisory Team',
     valuation: u.id === 'usr_gcb' ? 14850000 : u.id === 'usr_kwame' ? 148650 : 25000,
   }));
 
@@ -77,15 +77,15 @@ export default function AdminClientsPage() {
           />
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="bg-slate-100 p-0.5 rounded-md inline-flex border border-slate-200/50">
           {CATEGORY_OPTIONS.map((opt) => (
             <button
               key={opt.value}
               onClick={() => setCategoryFilter(opt.value)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+              className={`px-3 py-1.5 text-xs font-medium rounded transition-all ${
                 categoryFilter === opt.value
-                  ? 'bg-navy-900 text-white'
-                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               {opt.label}

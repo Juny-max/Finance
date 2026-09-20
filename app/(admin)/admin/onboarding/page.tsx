@@ -147,26 +147,28 @@ export default function AdminOnboardingPage() {
               />
             </div>
 
-            {/* Status pills + category select */}
+            {/* Status tabs + category select */}
             <div className="flex flex-wrap items-center gap-2">
-              {statusTabs.map((tab) => (
-                <button
-                  key={tab.value}
-                  onClick={() => setFilterStatus(tab.value)}
-                  className={`px-3 py-1 text-xs rounded-md transition-colors whitespace-nowrap ${
-                    filterStatus === tab.value
-                      ? 'bg-navy-900 text-white'
-                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
+              <div className="bg-slate-100 p-0.5 rounded-md inline-flex border border-slate-200/50">
+                {statusTabs.map((tab) => (
+                  <button
+                    key={tab.value}
+                    onClick={() => setFilterStatus(tab.value)}
+                    className={`px-3 py-1 text-xs font-medium rounded transition-all whitespace-nowrap ${
+                      filterStatus === tab.value
+                        ? 'bg-white text-slate-900 shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
 
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="h-7 px-2 text-xs border border-slate-200 rounded-md bg-white text-slate-600 focus:outline-none focus:ring-1 focus:ring-navy-900 ml-auto"
+                className="h-8 px-2.5 text-xs border border-slate-200 rounded-md bg-white text-slate-600 focus:outline-none focus:ring-1 focus:ring-navy-900 ml-auto"
               >
                 <option value="all">All Categories</option>
                 <option value="Individual">Individual</option>
@@ -200,8 +202,8 @@ export default function AdminOnboardingPage() {
                     onClick={() => setSelectedApp(app)}
                     className={`py-3 px-4 cursor-pointer flex items-center justify-between gap-3 transition-colors ${
                       isSelected
-                        ? 'bg-slate-50 border-l-2 border-navy-900'
-                        : 'hover:bg-slate-50 border-l-2 border-transparent'
+                        ? 'bg-slate-100'
+                        : 'hover:bg-slate-50'
                     }`}
                   >
                     <div className="min-w-0 flex-1 space-y-0.5">

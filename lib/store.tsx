@@ -39,7 +39,9 @@ function computePortfolio(userId: string, funds: Fund[], transactions: Transacti
   }
 
   // Apply transactions created during user session (id starting with txn_ and numeric timestamp)
-  const dynamicTxns = transactions.filter((t) => t.userId === userId && /^txn_\d{10,}/.test(t.id));
+  const dynamicTxns = transactions.filter(
+    (t) => t.userId === userId && /^txn_\d{10,}/.test(t.id) && t.status === "completed"
+  );
   for (const txn of dynamicTxns) {
     const normId = txn.fundId.replace(/^(bora|aura)-/, "");
     const matchingFund = funds.find((f) => f.id === txn.fundId || f.id.replace(/^(bora|aura)-/, "") === normId) || funds[0];
@@ -159,7 +161,7 @@ interface StoreContextType {
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
+  const { user, updateUserKycStatus } = useAuth();
   const userId = user?.id || "usr_kwame";
 
   const [funds, setFunds] = useState<Fund[]>(() =>
@@ -182,6 +184,26 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   useEffect(() => { saveToStorage(STORAGE_KEYS.TRANSACTIONS, transactions); }, [transactions]);
   useEffect(() => { saveToStorage(STORAGE_KEYS.ONBOARDING_APPLICATIONS, applications); }, [applications]);
   useEffect(() => { saveToStorage(STORAGE_KEYS.NOTIFICATIONS, notifications); }, [notifications]);
+
+  // Real-time synchronization across browser tabs via storage events
+  useEffect(() => {
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEYS.FUNDS && e.newValue) {
+        try { setFunds(JSON.parse(e.newValue)); } catch {}
+      }
+      if (e.key === STORAGE_KEYS.TRANSACTIONS && e.newValue) {
+        try { setTransactions(JSON.parse(e.newValue)); } catch {}
+      }
+      if (e.key === STORAGE_KEYS.ONBOARDING_APPLICATIONS && e.newValue) {
+        try { setApplications(JSON.parse(e.newValue)); } catch {}
+      }
+      if (e.key === STORAGE_KEYS.NOTIFICATIONS && e.newValue) {
+        try { setNotifications(JSON.parse(e.newValue)); } catch {}
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
 
   const userTransactions = transactions.filter((t) => t.userId === userId);
   const userStatements = (seedStatements as Statement[]).filter((s) => s.userId === userId);
@@ -216,10 +238,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     let fundId: string;
     let amount: number;
     let method = "Direct Payment";
+    let status: "completed" | "processing" | "pending" | "failed" = "completed";
+    let targetUserId = userId;
     if (typeof args[0] === "object" && args[0] !== null) {
       fundId = args[0].fundId;
       amount = args[0].amount;
       method = args[0].method || "Direct Payment";
+      if (args[0].status) status = args[0].status;
+      if (args[0].userId) targetUserId = args[0].userId;
     } else {
       fundId = args[0];
       amount = args[1];
@@ -229,13 +255,26 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     if (!fund) return;
     const units = Number((amount / fund.nav).toFixed(2));
     const txn: Transaction = {
-      id: `txn_${Date.now()}`, userId, date: new Date().toISOString().split("T")[0],
-      type: "investment", fundId, fundName: fund.name, amount, units, nav: fund.nav,
-      status: "completed", reference: `INV-${Date.now().toString().slice(-6)}`,
-      description: `Investment via ${method}`, paymentMethod: method,
+      id: `txn_${Date.now()}`,
+      userId: targetUserId,
+      date: new Date().toISOString().split("T")[0],
+      type: "investment",
+      fundId,
+      fundName: fund.name,
+      amount,
+      units,
+      nav: fund.nav,
+      status,
+      reference: `INV-${Date.now().toString().slice(-6)}`,
+      description: `Investment via ${method}`,
+      paymentMethod: method,
     };
     setTransactions((prev) => [txn, ...prev]);
-    showToast(`GH₵\u00A0${amount.toLocaleString()} invested in ${fund.shortName}. ${units.toLocaleString()} units allocated.`);
+    if (status === "completed") {
+      showToast(`GH₵\u00A0${amount.toLocaleString()} invested in ${fund.shortName}. ${units.toLocaleString()} units allocated.`);
+    } else {
+      showToast(`Investment of GH₵\u00A0${amount.toLocaleString()} submitted for settlement.`, "info");
+    }
   }, [funds, userId, showToast]) as any;
 
   const addWithdrawal = useCallback((...args: any[]) => {
@@ -308,38 +347,50 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const approveApplication = useCallback((id: string, notes?: string) => {
+    let targetEmail = "";
     setApplications((prev) =>
-      prev.map((app) =>
-        app.id === id
-          ? {
-              ...app,
-              status: "approved" as const,
-              reviewedBy: "Audrey Mensah (Compliance Officer)",
-              reviewedAt: new Date().toISOString(),
-              complianceNotes: notes || app.complianceNotes || "Approved and verified under SEC Ghana Guidelines.",
-            }
-          : app
-      )
+      prev.map((app) => {
+        if (app.id === id) {
+          targetEmail = app.email;
+          return {
+            ...app,
+            status: "approved" as const,
+            reviewedBy: "Audrey Mensah (Compliance Officer)",
+            reviewedAt: new Date().toISOString(),
+            complianceNotes: notes || app.complianceNotes || "Approved and verified under SEC Ghana Guidelines.",
+          };
+        }
+        return app;
+      })
     );
+    if (targetEmail) {
+      updateUserKycStatus(targetEmail, "verified");
+    }
     showToast("Application approved. Client KYC marked as verified.");
-  }, [showToast]);
+  }, [showToast, updateUserKycStatus]);
 
   const rejectApplication = useCallback((id: string, notes?: string) => {
+    let targetEmail = "";
     setApplications((prev) =>
-      prev.map((app) =>
-        app.id === id
-          ? {
-              ...app,
-              status: "rejected" as const,
-              reviewedBy: "Audrey Mensah (Compliance Officer)",
-              reviewedAt: new Date().toISOString(),
-              complianceNotes: notes || "Rejected due to incomplete or unverified documentation.",
-            }
-          : app
-      )
+      prev.map((app) => {
+        if (app.id === id) {
+          targetEmail = app.email;
+          return {
+            ...app,
+            status: "rejected" as const,
+            reviewedBy: "Audrey Mensah (Compliance Officer)",
+            reviewedAt: new Date().toISOString(),
+            complianceNotes: notes || "Rejected due to incomplete or unverified documentation.",
+          };
+        }
+        return app;
+      })
     );
+    if (targetEmail) {
+      updateUserKycStatus(targetEmail, "rejected");
+    }
     showToast("Application marked as rejected.", "info");
-  }, [showToast]);
+  }, [showToast, updateUserKycStatus]);
 
   const approveTransaction = useCallback((id: string) => {
     setTransactions((prev) =>

@@ -10,7 +10,7 @@ import { saveToStorage, STORAGE_KEYS } from '@/lib/persistence';
 export default function OnboardingPage() {
   const router = useRouter();
   const { signup } = useAuth();
-  const { addApplication } = useStore();
+  const { addApplication, addInvestment, funds } = useStore();
   const [step, setStep] = useState(1);
   const [accountType, setAccountType] = useState('Individual');
   const [firstName, setFirstName] = useState('');
@@ -33,6 +33,9 @@ export default function OnboardingPage() {
   const [statementDelivery, setStatementDelivery] = useState('Email');
   const [statementFrequency, setStatementFrequency] = useState('Monthly');
   const [sourceOfFunds, setSourceOfFunds] = useState('Salary / personal savings');
+  const [investmentGoal, setInvestmentGoal] = useState('Wealth Growth');
+  const [timeHorizon, setTimeHorizon] = useState('5+ years');
+  const [initialAmount, setInitialAmount] = useState('10000');
   const totalSteps = 6;
 
   const nextStep = () => setStep((s) => Math.min(s + 1, totalSteps));
@@ -54,7 +57,33 @@ export default function OnboardingPage() {
       'Institution': 'institutional',
       'Collective Investment Scheme': 'institutional',
     } as const;
-    const result = signup({ firstName, lastName, email, password, phone, riskProfile, accountType: accountTypeMap[accountType as keyof typeof accountTypeMap] });
+
+    const parsedAmount = parseFloat(initialAmount) || 10000;
+    const bankAccounts = fundingMethod === 'Bank Transfer' && bankName ? [{
+      id: `ba_${Date.now()}`,
+      bank: bankName,
+      accountNumber: bankAccountNumber || '9040001234567',
+      branch: bankBranch || 'Main Branch',
+      primary: true,
+    }] : [];
+    const momoAccounts = fundingMethod === 'Mobile Money' && momoNumber ? [{
+      id: `momo_${Date.now()}`,
+      network: (momoNetwork.includes('MTN') ? 'MTN' : momoNetwork.includes('Telecel') ? 'Telecel' : 'AT') as "MTN" | "Telecel" | "AT",
+      number: momoNumber,
+      name: momoAccountName || `${firstName} ${lastName}`,
+    }] : [];
+
+    const result = signup({
+      firstName,
+      lastName,
+      email,
+      password,
+      phone,
+      riskProfile,
+      accountType: accountTypeMap[accountType as keyof typeof accountTypeMap],
+      bankAccounts,
+      momoAccounts,
+    });
     if (!result.success) {
       alert(result.error || 'We could not create your account.');
       return;
@@ -66,6 +95,9 @@ export default function OnboardingPage() {
       phone,
       accountType,
       riskProfile,
+      investmentGoal,
+      timeHorizon,
+      initialAmount: parsedAmount,
       fundingMethod,
       bankName: fundingMethod === 'Bank Transfer' ? bankName : undefined,
       bankAccountName: fundingMethod === 'Bank Transfer' ? bankAccountName : undefined,
@@ -94,6 +126,9 @@ export default function OnboardingPage() {
       phone,
       riskProfile,
       managementStyle,
+      investmentGoal,
+      timeHorizon,
+      initialAmount: parsedAmount,
       fundingMethod: fundingMethod as any,
       bankName: fundingMethod === 'Bank Transfer' ? bankName : undefined,
       bankAccountName: fundingMethod === 'Bank Transfer' ? bankAccountName : undefined,
@@ -114,6 +149,17 @@ export default function OnboardingPage() {
       },
       complianceNotes: 'Awaiting compliance review and verification under SEC Ghana guidelines.',
     });
+
+    if (parsedAmount > 0 && result.user) {
+      const defaultFund = funds[0]?.id || 'aura-balanced-fund';
+      addInvestment({
+        fundId: defaultFund,
+        amount: parsedAmount,
+        method: fundingMethod,
+        status: 'processing',
+        userId: result.user.id,
+      });
+    }
 
     router.push('/');
   };
@@ -219,7 +265,11 @@ export default function OnboardingPage() {
               <div className="border-t border-slate-100 pt-5 mt-6"><p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Account service preferences</p><div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><div><label className="block text-sm font-medium text-slate-700 mb-1">Portfolio management</label><select value={managementStyle} onChange={(e) => setManagementStyle(e.target.value)} className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md bg-white"><option>Aura Managed</option><option>Client Managed</option></select></div><div><label className="block text-sm font-medium text-slate-700 mb-1">Source of funds</label><select value={sourceOfFunds} onChange={(e) => setSourceOfFunds(e.target.value)} className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md bg-white"><option>Salary / personal savings</option><option>Business proceeds</option><option>Investment proceeds</option><option>Inheritance / gifts</option><option>Other</option></select></div><div><label className="block text-sm font-medium text-slate-700 mb-1">Statement delivery</label><select value={statementDelivery} onChange={(e) => setStatementDelivery(e.target.value)} className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md bg-white"><option>Email</option><option>SMS notification</option><option>Collection</option><option>Post</option></select></div><div><label className="block text-sm font-medium text-slate-700 mb-1">Statement frequency</label><select value={statementFrequency} onChange={(e) => setStatementFrequency(e.target.value)} className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md bg-white"><option>Monthly</option><option>Quarterly</option></select></div></div></div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Investment Goal</label>
-                <select className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md bg-white">
+                <select
+                  value={investmentGoal}
+                  onChange={(e) => setInvestmentGoal(e.target.value)}
+                  className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md bg-white"
+                >
                   <option>Wealth Growth</option>
                   <option>Income Generation</option>
                   <option>Capital Preservation</option>
@@ -228,7 +278,11 @@ export default function OnboardingPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Time Horizon</label>
-                <select className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md bg-white">
+                <select
+                  value={timeHorizon}
+                  onChange={(e) => setTimeHorizon(e.target.value)}
+                  className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md bg-white"
+                >
                   <option>Less than 1 year</option>
                   <option>1-3 years</option>
                   <option>3-5 years</option>
@@ -237,7 +291,12 @@ export default function OnboardingPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Initial investment amount (GH₵)</label>
-                <input type="number" className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md" />
+                <input
+                  type="number"
+                  value={initialAmount}
+                  onChange={(e) => setInitialAmount(e.target.value)}
+                  className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md"
+                />
               </div>
             </div>
           )}
@@ -395,8 +454,12 @@ export default function OnboardingPage() {
                   <p className="text-sm text-slate-900 mt-1">{accountType}</p>
                 </div>
                 <div>
-                  <span className="text-xs text-slate-500 font-medium uppercase">Goal & Horizon</span>
-                  <p className="text-sm text-slate-900 mt-1">Wealth Growth, 5+ years</p>
+                  <span className="text-xs text-slate-500 font-medium uppercase">Goal &amp; Horizon</span>
+                  <p className="text-sm text-slate-900 mt-1">{investmentGoal} · {timeHorizon}</p>
+                </div>
+                <div>
+                  <span className="text-xs text-slate-500 font-medium uppercase">Initial Investment</span>
+                  <p className="text-sm text-slate-900 mt-1 font-mono">GH₵ {Number(initialAmount || 0).toLocaleString()}</p>
                 </div>
                 <div>
                   <span className="text-xs text-slate-500 font-medium uppercase">Risk Profile</span>

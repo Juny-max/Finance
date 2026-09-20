@@ -13,7 +13,8 @@ export interface User {
   address: string;
   city: string;
   country: string;
-  kycStatus: "pending" | "verified" | "expired";
+  kycStatus: "pending" | "verified" | "rejected" | "expired";
+  role?: "client" | "admin";
   joinDate: string;
   advisor: Advisor;
   bankAccounts: BankAccount[];
