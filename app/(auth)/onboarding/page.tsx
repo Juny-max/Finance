@@ -19,6 +19,14 @@ export default function OnboardingPage() {
   const [phone, setPhone] = useState('');
   const [riskProfile, setRiskProfile] = useState<'conservative' | 'moderate' | 'balanced' | 'growth'>('balanced');
   const [fundingMethod, setFundingMethod] = useState('Bank Transfer');
+  const [bankName, setBankName] = useState('');
+  const [bankAccountName, setBankAccountName] = useState('');
+  const [bankAccountNumber, setBankAccountNumber] = useState('');
+  const [bankBranch, setBankBranch] = useState('');
+  const [momoNetwork, setMomoNetwork] = useState('MTN Mobile Money');
+  const [momoAccountName, setMomoAccountName] = useState('');
+  const [momoNumber, setMomoNumber] = useState('');
+  const [momoWalletType, setMomoWalletType] = useState('Subscriber / Personal');
   const [managementStyle, setManagementStyle] = useState('Aura Managed');
   const [statementDelivery, setStatementDelivery] = useState('Email');
   const [statementFrequency, setStatementFrequency] = useState('Monthly');
@@ -49,7 +57,28 @@ export default function OnboardingPage() {
       alert(result.error || 'We could not create your account.');
       return;
     }
-    saveToStorage(STORAGE_KEYS.ONBOARDING_DRAFT, { firstName, lastName, email, phone, accountType, riskProfile, fundingMethod, managementStyle, statementDelivery, statementFrequency, sourceOfFunds, completedAt: new Date().toISOString() });
+    saveToStorage(STORAGE_KEYS.ONBOARDING_DRAFT, {
+      firstName,
+      lastName,
+      email,
+      phone,
+      accountType,
+      riskProfile,
+      fundingMethod,
+      bankName: fundingMethod === 'Bank Transfer' ? bankName : undefined,
+      bankAccountName: fundingMethod === 'Bank Transfer' ? bankAccountName : undefined,
+      bankAccountNumber: fundingMethod === 'Bank Transfer' ? bankAccountNumber : undefined,
+      bankBranch: fundingMethod === 'Bank Transfer' ? bankBranch : undefined,
+      momoNetwork: fundingMethod === 'Mobile Money' ? momoNetwork : undefined,
+      momoAccountName: fundingMethod === 'Mobile Money' ? momoAccountName : undefined,
+      momoNumber: fundingMethod === 'Mobile Money' ? momoNumber : undefined,
+      momoWalletType: fundingMethod === 'Mobile Money' ? momoWalletType : undefined,
+      managementStyle,
+      statementDelivery,
+      statementFrequency,
+      sourceOfFunds,
+      completedAt: new Date().toISOString(),
+    });
     router.push('/');
   };
 
@@ -200,14 +229,119 @@ export default function OnboardingPage() {
             <div className="space-y-4">
               <h2 className="text-2xl font-semibold text-slate-900 mb-1">Funding & verification</h2>
               <p className="text-sm text-slate-500 mb-5">Add your preferred funding route and the documents required for review.</p>
-              <div className="grid grid-cols-1 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {['Bank Transfer', 'Mobile Money'].map((method) => (
-                  <button key={method} onClick={() => setFundingMethod(method)} className={`flex items-center p-4 border rounded-lg hover:border-navy-900 hover:bg-slate-50 transition-colors text-left ${fundingMethod === method ? 'border-navy-900 bg-navy-50/40 ring-1 ring-navy-900' : 'border-slate-200'}`}>
+                  <button
+                    key={method}
+                    type="button"
+                    onClick={() => setFundingMethod(method)}
+                    className={`flex flex-col p-4 border rounded-lg hover:border-navy-900 hover:bg-slate-50 transition-colors text-left ${
+                      fundingMethod === method ? 'border-navy-900 bg-navy-50/40 ring-1 ring-navy-900' : 'border-slate-200'
+                    }`}
+                  >
                     <span className="font-medium text-slate-900">{method}</span>
+                    <span className="text-xs text-slate-500 mt-1">
+                      {method === 'Bank Transfer' ? 'Direct bank deposit or standing order' : 'Instant deposit via MTN, Telecel, or AT Money'}
+                    </span>
                   </button>
                 ))}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-100 pt-5 mt-6"><div><label className="block text-sm font-medium text-slate-700 mb-1">Bank name</label><input type="text" className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md" /></div><div><label className="block text-sm font-medium text-slate-700 mb-1">Account name</label><input type="text" className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md" /></div><div><label className="block text-sm font-medium text-slate-700 mb-1">Account number</label><input type="text" className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md" /></div><div><label className="block text-sm font-medium text-slate-700 mb-1">Bank branch</label><input type="text" className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md" /></div></div>
+
+              {fundingMethod === 'Bank Transfer' ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-100 pt-5 mt-6">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Bank name</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Stanbic Bank Ghana"
+                      value={bankName}
+                      onChange={(e) => setBankName(e.target.value)}
+                      className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Account name</label>
+                    <input
+                      type="text"
+                      placeholder="Name on bank account"
+                      value={bankAccountName}
+                      onChange={(e) => setBankAccountName(e.target.value)}
+                      className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Account number</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 9040001234567"
+                      value={bankAccountNumber}
+                      onChange={(e) => setBankAccountNumber(e.target.value)}
+                      className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md bg-white font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Bank branch</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Airport City Branch"
+                      value={bankBranch}
+                      onChange={(e) => setBankBranch(e.target.value)}
+                      className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md bg-white"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4 border-t border-slate-100 pt-5 mt-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">Mobile Money network</label>
+                      <select
+                        value={momoNetwork}
+                        onChange={(e) => setMomoNetwork(e.target.value)}
+                        className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md bg-white"
+                      >
+                        <option value="MTN Mobile Money">MTN Mobile Money</option>
+                        <option value="Telecel Cash">Telecel Cash</option>
+                        <option value="AT Money">AT Money</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">Wallet type</label>
+                      <select
+                        value={momoWalletType}
+                        onChange={(e) => setMomoWalletType(e.target.value)}
+                        className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md bg-white"
+                      >
+                        <option value="Subscriber / Personal">Subscriber / Personal</option>
+                        <option value="Merchant / Corporate">Merchant / Corporate</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">Mobile Money number</label>
+                      <input
+                        type="tel"
+                        placeholder="e.g. 0244123456"
+                        value={momoNumber}
+                        onChange={(e) => setMomoNumber(e.target.value)}
+                        className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md bg-white font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">Registered subscriber name</label>
+                      <input
+                        type="text"
+                        placeholder="Name registered on SIM / Ghana Card"
+                        value={momoAccountName}
+                        onChange={(e) => setMomoAccountName(e.target.value)}
+                        className="h-10 w-full px-3 text-sm border border-slate-200 rounded-md bg-white"
+                      />
+                    </div>
+                  </div>
+                  <div className="bg-amber-50 border border-amber-200/60 rounded-md p-3 text-xs text-amber-900 leading-relaxed">
+                    <strong>Important notice:</strong> Under Bank of Ghana KYC regulations, the Mobile Money wallet must be registered in the account holder’s name matching your national ID / Ghana Card.
+                  </div>
+                </div>
+              )}
               <div className="border-t border-slate-100 pt-5 mt-2"><p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Supporting documents</p><div className="grid grid-cols-1 sm:grid-cols-3 gap-3"><label className="rounded-lg border border-dashed border-slate-300 p-3 text-center text-xs text-slate-600 cursor-pointer hover:bg-slate-50">National ID / passport<input type="file" className="sr-only" accept="image/*,.pdf" /></label><label className="rounded-lg border border-dashed border-slate-300 p-3 text-center text-xs text-slate-600 cursor-pointer hover:bg-slate-50">Proof of address<input type="file" className="sr-only" accept="image/*,.pdf" /></label><label className="rounded-lg border border-dashed border-slate-300 p-3 text-center text-xs text-slate-600 cursor-pointer hover:bg-slate-50">Passport photo / mandate<input type="file" className="sr-only" accept="image/*,.pdf" /></label></div><p className="mt-2 text-xs text-slate-500">Institutional and scheme applications may also require registration documents, board resolutions, trust deeds or fund rules.</p></div>
             </div>
           )}
@@ -232,7 +366,18 @@ export default function OnboardingPage() {
                   <span className="text-xs text-slate-500 font-medium uppercase">Risk Profile</span>
                   <p className="text-sm text-slate-900 mt-1 capitalize">{riskProfile}</p>
                 </div>
-                <div><span className="text-xs text-slate-500 font-medium uppercase">Funding method</span><p className="text-sm text-slate-900 mt-1">{fundingMethod}</p></div>
+                <div>
+                  <span className="text-xs text-slate-500 font-medium uppercase">Funding Details</span>
+                  {fundingMethod === 'Bank Transfer' ? (
+                    <p className="text-sm text-slate-900 mt-1">
+                      Bank Transfer {bankName ? `· ${bankName}` : ''} {bankAccountNumber ? `(${bankAccountNumber})` : ''} {bankAccountName ? `· ${bankAccountName}` : ''}
+                    </p>
+                  ) : (
+                    <p className="text-sm text-slate-900 mt-1">
+                      {momoNetwork} {momoNumber ? `(${momoNumber})` : ''} {momoAccountName ? `· ${momoAccountName}` : ''} {momoWalletType ? `[${momoWalletType}]` : ''}
+                    </p>
+                  )}
+                </div>
                 <div><span className="text-xs text-slate-500 font-medium uppercase">Portfolio service</span><p className="text-sm text-slate-900 mt-1">{managementStyle} · {statementDelivery}, {statementFrequency}</p></div>
               </div>
             </div>
