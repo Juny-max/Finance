@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, Rea
 import type {
   Fund, Transaction, Statement, AppNotification,
   PortfolioData, Holding, PortfolioSummary,
-  Toast, Timeframe, ChartDataPoint,
+  Toast, Timeframe, ChartDataPoint, OnboardingApplication,
 } from "./types";
 import { loadFromStorage, saveToStorage, STORAGE_KEYS } from "./persistence";
 import { useAuth } from "./auth";
@@ -12,6 +12,7 @@ import seedFunds from "@/data/funds.json";
 import seedTransactions from "@/data/transactions.json";
 import seedStatements from "@/data/statements.json";
 import seedNotifications from "@/data/notifications.json";
+import seedApplications from "@/data/onboarding_applications.json";
 
 // ─── Computed portfolio data from seed ────────────────────────
 function computePortfolio(userId: string, funds: Fund[], transactions: Transaction[]): PortfolioData {
@@ -132,6 +133,8 @@ interface StoreContextType {
   funds: Fund[];
   portfolio: PortfolioData;
   transactions: Transaction[];
+  allTransactions: Transaction[];
+  applications: OnboardingApplication[];
   statements: Statement[];
   notifications: AppNotification[];
   unreadCount: number;
@@ -145,6 +148,12 @@ interface StoreContextType {
   addInvestment: (fundIdOrParams: any, amount?: number, method?: string) => void;
   addWithdrawal: (fundIdOrParams: any, amount?: number, units?: number, destination?: string) => void;
   addSwitch: (fromFundIdOrParams: any, toFundId?: string, amount?: number) => void;
+  addApplication: (app: OnboardingApplication) => void;
+  approveApplication: (id: string, notes?: string) => void;
+  rejectApplication: (id: string, notes?: string) => void;
+  approveTransaction: (id: string) => void;
+  rejectTransaction: (id: string, reason?: string) => void;
+  updateFundNav: (fundId: string, newNav: number, dailyChangePercent?: number) => void;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -153,9 +162,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const userId = user?.id || "usr_kwame";
 
-  const [funds] = useState<Fund[]>(seedFunds as Fund[]);
+  const [funds, setFunds] = useState<Fund[]>(() =>
+    loadFromStorage(STORAGE_KEYS.FUNDS, seedFunds as Fund[])
+  );
   const [transactions, setTransactions] = useState<Transaction[]>(() =>
     loadFromStorage(STORAGE_KEYS.TRANSACTIONS, seedTransactions as Transaction[])
+  );
+  const [applications, setApplications] = useState<OnboardingApplication[]>(() =>
+    loadFromStorage(STORAGE_KEYS.ONBOARDING_APPLICATIONS, seedApplications as OnboardingApplication[])
   );
   const [notifications, setNotifications] = useState<AppNotification[]>(() =>
     loadFromStorage(STORAGE_KEYS.NOTIFICATIONS, seedNotifications as AppNotification[])
@@ -164,7 +178,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   // Persist on change
+  useEffect(() => { saveToStorage(STORAGE_KEYS.FUNDS, funds); }, [funds]);
   useEffect(() => { saveToStorage(STORAGE_KEYS.TRANSACTIONS, transactions); }, [transactions]);
+  useEffect(() => { saveToStorage(STORAGE_KEYS.ONBOARDING_APPLICATIONS, applications); }, [applications]);
   useEffect(() => { saveToStorage(STORAGE_KEYS.NOTIFICATIONS, notifications); }, [notifications]);
 
   const userTransactions = transactions.filter((t) => t.userId === userId);
@@ -287,14 +303,95 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     showToast(`Switched GH₵\u00A0${amount.toLocaleString()} from ${fromFund.shortName} to ${toFund.shortName}.`);
   }, [funds, userId, showToast]) as any;
 
+  const addApplication = useCallback((app: OnboardingApplication) => {
+    setApplications((prev) => [app, ...prev]);
+  }, []);
+
+  const approveApplication = useCallback((id: string, notes?: string) => {
+    setApplications((prev) =>
+      prev.map((app) =>
+        app.id === id
+          ? {
+              ...app,
+              status: "approved" as const,
+              reviewedBy: "Audrey Mensah (Compliance Officer)",
+              reviewedAt: new Date().toISOString(),
+              complianceNotes: notes || app.complianceNotes || "Approved and verified under SEC Ghana Guidelines.",
+            }
+          : app
+      )
+    );
+    showToast("Application approved. Client KYC marked as verified.");
+  }, [showToast]);
+
+  const rejectApplication = useCallback((id: string, notes?: string) => {
+    setApplications((prev) =>
+      prev.map((app) =>
+        app.id === id
+          ? {
+              ...app,
+              status: "rejected" as const,
+              reviewedBy: "Audrey Mensah (Compliance Officer)",
+              reviewedAt: new Date().toISOString(),
+              complianceNotes: notes || "Rejected due to incomplete or unverified documentation.",
+            }
+          : app
+      )
+    );
+    showToast("Application marked as rejected.", "info");
+  }, [showToast]);
+
+  const approveTransaction = useCallback((id: string) => {
+    setTransactions((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, status: "completed" as const } : t))
+    );
+    showToast(`Transaction ${id} settled and marked completed.`);
+  }, [showToast]);
+
+  const rejectTransaction = useCallback((id: string, reason?: string) => {
+    setTransactions((prev) =>
+      prev.map((t) =>
+        t.id === id
+          ? { ...t, status: "failed" as const, description: `${t.description} (Declined: ${reason || "Failed compliance review"})` }
+          : t
+      )
+    );
+    showToast(`Transaction ${id} declined.`, "error");
+  }, [showToast]);
+
+  const updateFundNav = useCallback((fundId: string, newNav: number, dailyChangePercent?: number) => {
+    setFunds((prev) =>
+      prev.map((f) => {
+        if (f.id === fundId) {
+          const changePercent = dailyChangePercent !== undefined
+            ? dailyChangePercent
+            : Number((((newNav - f.nav) / f.nav) * 100).toFixed(2));
+          const changeVal = Number((newNav - f.nav).toFixed(4));
+          return {
+            ...f,
+            nav: newNav,
+            dailyChange: changeVal,
+            dailyChangePercent: changePercent,
+            navDate: new Date().toISOString().split("T")[0],
+          };
+        }
+        return f;
+      })
+    );
+    showToast("Fund NAV updated successfully.");
+  }, [showToast]);
+
   return (
     <StoreContext.Provider
       value={{
-        funds, portfolio, transactions: userTransactions,
+        funds, portfolio, transactions: userTransactions, allTransactions: transactions,
+        applications,
         statements: userStatements, notifications: userNotifications,
         unreadCount, toasts, balanceHidden, toggleBalance,
         showToast, removeToast, markNotificationRead, markAllNotificationsRead,
         addInvestment, addWithdrawal, addSwitch,
+        addApplication, approveApplication, rejectApplication,
+        approveTransaction, rejectTransaction, updateFundNav,
       }}
     >
       {children}

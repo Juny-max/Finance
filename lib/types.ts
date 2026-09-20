@@ -253,3 +253,40 @@ export interface OnboardingData {
   fundingMethod: "bank_transfer" | "mobile_money";
 }
 
+export interface OnboardingApplication {
+  id: string;
+  reference: string;
+  submittedAt: string;
+  status: "pending_review" | "approved" | "rejected" | "info_requested";
+  accountCategory: "Individual" | "Joint Account" | "Institution" | "Collective Investment Scheme";
+  applicantName: string;
+  email: string;
+  phone: string;
+  riskProfile: "conservative" | "moderate" | "balanced" | "growth";
+  managementStyle: string;
+  fundingMethod: "Bank Transfer" | "Mobile Money";
+  bankName?: string;
+  bankAccountName?: string;
+  bankAccountNumber?: string;
+  bankBranch?: string;
+  momoNetwork?: string;
+  momoAccountName?: string;
+  momoNumber?: string;
+  momoWalletType?: string;
+  sourceOfFunds?: string;
+  investmentGoal?: string;
+  timeHorizon?: string;
+  initialAmount?: number;
+  statementDelivery?: string;
+  statementFrequency?: string;
+  documents: {
+    nationalId: boolean;
+    proofOfAddress: boolean;
+    passportOrMandate: boolean;
+    institutionalResolution?: boolean;
+  };
+  complianceNotes?: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
+}
+

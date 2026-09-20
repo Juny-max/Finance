@@ -4,11 +4,13 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/lib/auth';
+import { useStore } from '@/lib/store';
 import { saveToStorage, STORAGE_KEYS } from '@/lib/persistence';
 
 export default function OnboardingPage() {
   const router = useRouter();
   const { signup } = useAuth();
+  const { addApplication } = useStore();
   const [step, setStep] = useState(1);
   const [accountType, setAccountType] = useState('Individual');
   const [firstName, setFirstName] = useState('');
@@ -79,6 +81,40 @@ export default function OnboardingPage() {
       sourceOfFunds,
       completedAt: new Date().toISOString(),
     });
+
+    const refNumber = `APP-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    addApplication({
+      id: `app_${Date.now()}`,
+      reference: refNumber,
+      submittedAt: new Date().toISOString(),
+      status: 'pending_review',
+      accountCategory: accountType as any,
+      applicantName: `${firstName} ${lastName}`,
+      email,
+      phone,
+      riskProfile,
+      managementStyle,
+      fundingMethod: fundingMethod as any,
+      bankName: fundingMethod === 'Bank Transfer' ? bankName : undefined,
+      bankAccountName: fundingMethod === 'Bank Transfer' ? bankAccountName : undefined,
+      bankAccountNumber: fundingMethod === 'Bank Transfer' ? bankAccountNumber : undefined,
+      bankBranch: fundingMethod === 'Bank Transfer' ? bankBranch : undefined,
+      momoNetwork: fundingMethod === 'Mobile Money' ? momoNetwork : undefined,
+      momoAccountName: fundingMethod === 'Mobile Money' ? momoAccountName : undefined,
+      momoNumber: fundingMethod === 'Mobile Money' ? momoNumber : undefined,
+      momoWalletType: fundingMethod === 'Mobile Money' ? momoWalletType : undefined,
+      sourceOfFunds,
+      statementDelivery,
+      statementFrequency,
+      documents: {
+        nationalId: true,
+        proofOfAddress: true,
+        passportOrMandate: true,
+        institutionalResolution: accountType === 'Institution' || accountType === 'Collective Investment Scheme',
+      },
+      complianceNotes: 'Awaiting compliance review and verification under SEC Ghana guidelines.',
+    });
+
     router.push('/');
   };
 

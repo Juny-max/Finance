@@ -186,6 +186,39 @@ export default function LoginPage() {
               <span className="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded">Institutional</span>
             )}
           </button>
+
+          <button
+            type="button"
+            onClick={() => handleFillDemo('admin@auraasset.com', 'demo1234')}
+            className={`w-full flex justify-between items-center px-4 py-2.5 text-sm border rounded-md transition-all active:scale-[0.99] text-left ${
+              selectedDemo === 'admin@auraasset.com'
+                ? 'border-amber-500 bg-amber-50/50 text-navy-900 ring-1 ring-amber-400'
+                : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+            }`}
+          >
+            <div>
+              <span className="font-medium text-slate-900 block">Audrey Mensah</span>
+              <span className="text-xs text-slate-500">admin@auraasset.com</span>
+            </div>
+            {selectedDemo === 'admin@auraasset.com' ? (
+              <span className="text-xs font-semibold text-amber-700 flex items-center gap-1 bg-amber-100/60 px-2 py-0.5 rounded">
+                <CheckCircle size={14} weight="fill" className="text-amber-600" />
+                Filled
+              </span>
+            ) : (
+              <span className="text-xs text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded font-medium">Operations / Admin</span>
+            )}
+          </button>
+        </div>
+
+        <div className="mt-4 pt-3 border-t border-slate-100 text-center">
+          <Link
+            href="/admin"
+            className="text-xs font-semibold text-navy-900 hover:text-amber-700 inline-flex items-center gap-1 transition-colors"
+          >
+            <span>Open Back-Office Operations Desk directly</span>
+            <span>→</span>
+          </Link>
         </div>
       </div>
     </div>

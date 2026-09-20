@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { MagnifyingGlass, Bell, UserCircle, SignOut, Question } from '@phosphor-icons/react';
+import { MagnifyingGlass, Bell, UserCircle, SignOut, Question, ShieldCheck } from '@phosphor-icons/react';
 import { useAuth } from '@/lib/auth';
 import { useStore } from '@/lib/store';
 
@@ -95,6 +95,10 @@ export function TopBar() {
               </div>
               
               <div className="py-1">
+                <Link href="/admin" className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-amber-800 bg-amber-50/70 hover:bg-amber-100/70">
+                  <ShieldCheck size={16} weight="bold" className="text-amber-600" />
+                  <span>Operations Desk (Admin)</span>
+                </Link>
                 <Link href="/profile" className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                   Profile Settings
                 </Link>

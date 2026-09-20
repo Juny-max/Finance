@@ -57,5 +57,30 @@
     ],
     "momoAccounts": [],
     "beneficiaries": []
+  },
+  {
+    "id": "usr_admin",
+    "email": "admin@auraasset.com",
+    "password": "demo1234",
+    "firstName": "Audrey",
+    "lastName": "Mensah",
+    "accountNumber": "OPS-001",
+    "accountType": "corporate",
+    "riskProfile": "balanced",
+    "phone": "+233 30 277 4839",
+    "address": "No. 14 Senchi Street, Airport Residential Area",
+    "city": "Accra",
+    "country": "Ghana",
+    "kycStatus": "verified",
+    "joinDate": "2020-01-01",
+    "advisor": {
+      "name": "Aura Operations Desk",
+      "role": "Chief Compliance Officer",
+      "email": "compliance@auraasset.com",
+      "phone": "+233 30 277 4839"
+    },
+    "bankAccounts": [],
+    "momoAccounts": [],
+    "beneficiaries": []
   }
 ]

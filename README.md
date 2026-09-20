@@ -66,6 +66,13 @@ Designed with a private banking aesthetic, the platform communicates **Trust, Pr
 - Direct relationship manager contact, callback requests, and consultation bookings.
 - Expandable FAQ accordions addressing fund deposits, redemption timelines (T+2), statutory custodial protections, and management fees.
 
+### 10. Back-Office & Compliance Desk (`/admin`)
+- **Operations Overview (`/admin`)**: High-level KPI cockpit tracking AuM under supervision, pending KYC application count, and pending settlement volumes.
+- **KYC & Onboarding Review Desk (`/admin/onboarding`)**: Triage submissions across all 4 investor categories (Individual, Joint, Institutional, CIS). Inspect Ghana Card verification, proof of address, signature mandates, and Mobile Money / Bank mandate matches with 1-click Approve/Reject controls.
+- **Settlement & Reconciliations Queue (`/admin/transactions`)**: Live clearing desk for incoming deposits and statutory T+2 redemptions adhering to SEC Ghana guidelines.
+- **Master Client & Scheme Registry (`/admin/clients`)**: Comprehensive directory of HNWIs, corporate treasuries, and institutional pension trustees.
+- **Daily NAV Valuation Desk (`/admin/funds`)**: Interactive unit price publishing tool with real-time recalculation of daily movements across all Aura funds.
+
 ---
 
 ## Interactive Transaction Flows
@@ -96,8 +103,9 @@ The portal includes pre-configured demo accounts for presentation purposes:
 |---|---|---|---|---|
 | **Kwame Mensah** | Individual Private Client | `AM-20491` | `GH₵ 148,650.00` | `kwame@example.com` / `demo1234` |
 | **GCB Staff Provident Scheme** | Institutional Pension Mandate | `AM-88102` | `GH₵ 14,850,000.00` | `trustees@gcbprovident.com` / `demo1234` |
+| **Audrey Mensah** | Operations & Compliance Officer | `OPS-001` | Back-Office Desk | `admin@auraasset.com` / `demo1234` |
 
-> Quick 1-click login buttons are accessible directly from the bottom of the `/login` screen.
+> Quick 1-click autofill buttons and direct links to the Back-Office are accessible directly from the `/login` screen and the TopBar profile dropdown.
 
 ---
 
