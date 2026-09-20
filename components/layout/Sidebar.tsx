@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { 
   House, 
   Briefcase, 
+  Vault,
   Coins, 
   ArrowsLeftRight, 
   FileText, 
@@ -22,6 +23,7 @@ import { useNavigationState } from '@/lib/navigation';
 const NAV_ITEMS = [
   { name: 'Overview', href: '/', icon: House },
   { name: 'Portfolio', href: '/portfolio', icon: Briefcase },
+  { name: 'Private Wealth', href: '/private-wealth', icon: Vault },
   { name: 'Funds', href: '/funds', icon: Coins },
   { name: 'Transactions', href: '/transactions', icon: ArrowsLeftRight },
   { name: 'Statements', href: '/statements', icon: FileText },

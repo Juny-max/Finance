@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { MagnifyingGlass, Bell, UserCircle, SignOut } from '@phosphor-icons/react';
+import { MagnifyingGlass, Bell, UserCircle, SignOut, Question } from '@phosphor-icons/react';
 import { useAuth } from '@/lib/auth';
 import { useStore } from '@/lib/store';
 
@@ -37,6 +37,9 @@ export function TopBar() {
       </div>
 
       <div className="flex items-center gap-4">
+        <button onClick={() => window.dispatchEvent(new Event('open-portal-tour'))} title="Replay portal guide" className="hidden text-slate-400 transition-colors hover:text-navy-900 sm:block">
+          <Question size={20} weight="bold" />
+        </button>
         <button className="text-slate-400 hover:text-slate-600 transition-colors">
           <MagnifyingGlass size={20} weight="bold" />
         </button>

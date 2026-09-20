@@ -53,7 +53,7 @@ export default function PortfolioPage() {
             </button>
           </div>
         </div>
-        <div className="flex gap-3">
+        <div data-tour="portfolio-actions" className="flex gap-3">
           <button 
             onClick={() => setIsWithdrawOpen(true)}
             className="h-10 px-5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-50 transition-colors flex items-center gap-2"
@@ -94,7 +94,7 @@ export default function PortfolioPage() {
         <div className="bg-white border border-slate-200/60 rounded-lg p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">YTD Return</p>
           <p className="text-xl font-light text-emerald-600 tabular-nums mt-2">
-            +{formatPercent(portfolio.summary.ytdReturn)}
+            {formatPercent(portfolio.summary.ytdReturn)}
           </p>
         </div>
       </div>

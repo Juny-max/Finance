@@ -37,5 +37,6 @@ export const STORAGE_KEYS = {
   NOTIFICATIONS: "notifications",
   PORTFOLIOS: "portfolios",
   SETTINGS: "settings",
+  USERS: "users",
+  ONBOARDING_DRAFT: "onboarding_draft",
 } as const;
-

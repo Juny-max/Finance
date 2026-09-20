@@ -49,7 +49,7 @@ export function AdvisorCallbackModal({ isOpen, onClose }: AdvisorCallbackModalPr
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6">
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -62,7 +62,7 @@ export function AdvisorCallbackModal({ isOpen, onClose }: AdvisorCallbackModalPr
           initial={{ opacity: 0, scale: 0.96, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 1, y: 0 }}
-          className="relative bg-white w-full max-w-xl rounded-xl shadow-2xl border border-slate-200 overflow-hidden z-10"
+          className="relative z-10 flex max-h-[calc(100dvh-1.5rem)] w-full max-w-xl flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl"
         >
           {/* Header */}
           <div className="px-6 py-5 bg-navy-900 text-white flex items-center justify-between">
@@ -79,9 +79,9 @@ export function AdvisorCallbackModal({ isOpen, onClose }: AdvisorCallbackModalPr
           </div>
 
           {/* Advisor Identity Strip */}
-          <div className="bg-slate-50 border-b border-slate-200/80 px-6 py-4 flex items-center justify-between">
+          <div className="flex shrink-0 items-center justify-between border-b border-slate-200/80 bg-slate-50 px-4 py-3 sm:px-6 sm:py-4">
             <div className="flex items-center gap-3.5">
-              <div className="w-11 h-11 rounded-full bg-navy-900 text-gold-400 font-semibold flex items-center justify-center text-sm shadow-sm">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-navy-900 text-sm font-semibold text-gold-400 shadow-sm sm:h-11 sm:w-11">
                 {advisor.name.split(' ').map(n => n[0]).slice(0, 2).join('')}
               </div>
               <div>
@@ -89,7 +89,7 @@ export function AdvisorCallbackModal({ isOpen, onClose }: AdvisorCallbackModalPr
                 <p className="text-xs text-slate-500">{advisor.role}</p>
               </div>
             </div>
-            <div className="text-right text-xs">
+            <div className="hidden text-right text-xs sm:block">
               <span className="text-slate-500 block">Direct Desk</span>
               <span className="font-mono font-medium text-slate-900">{advisor.phone}</span>
             </div>
@@ -147,11 +147,11 @@ export function AdvisorCallbackModal({ isOpen, onClose }: AdvisorCallbackModalPr
             </div>
           ) : (
             /* Booking Form */
-            <form onSubmit={handleBook} className="p-6 space-y-4">
+            <form onSubmit={handleBook} className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4 sm:p-6">
               {/* Channel Selector */}
               <div>
                 <label className="block text-xs font-medium text-slate-600 mb-2">Preferred Consultation Channel</label>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3">
                   <button
                     type="button"
                     onClick={() => setChannel("phone")}
@@ -294,4 +294,3 @@ export function AdvisorCallbackModal({ isOpen, onClose }: AdvisorCallbackModalPr
     </AnimatePresence>
   );
 }
-

@@ -117,25 +117,25 @@ export default function InsightsPage() {
         <div className="bg-white border border-slate-200/60 rounded-lg p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Return</p>
           <p className="text-xl font-light text-emerald-600 tabular-nums mt-2">
-            +{formatPercent(portfolio.summary.gainPercent)}
+            {formatPercent(portfolio.summary.gainPercent)}
           </p>
         </div>
         <div className="bg-white border border-slate-200/60 rounded-lg p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">YTD Return</p>
           <p className="text-xl font-light text-emerald-600 tabular-nums mt-2">
-            +{formatPercent(portfolio.summary.ytdReturn)}
+            {formatPercent(portfolio.summary.ytdReturn)}
           </p>
         </div>
         <div className="bg-white border border-slate-200/60 rounded-lg p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">1 Year Return</p>
           <p className="text-xl font-light text-emerald-600 tabular-nums mt-2">
-            +{formatPercent(portfolio.summary.ytdReturn * 1.2)} {/* Illustrative */}
+            {formatPercent(portfolio.summary.ytdReturn * 1.2)} {/* Illustrative */}
           </p>
         </div>
         <div className="bg-white border border-slate-200/60 rounded-lg p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Since Inception (Ann.)</p>
           <p className="text-xl font-light text-emerald-600 tabular-nums mt-2">
-            +{formatPercent(portfolio.summary.gainPercent * 0.8)} {/* Illustrative */}
+            {formatPercent(portfolio.summary.gainPercent * 0.8)} {/* Illustrative */}
           </p>
         </div>
       </div>
@@ -153,7 +153,7 @@ export default function InsightsPage() {
                   <div className="flex justify-between text-sm mb-2">
                     <span className="text-slate-700 font-medium">{holding.fundId.replace(/-/g, ' ')}</span>
                     <span className={contribution >= 0 ? "text-emerald-600" : "text-red-500"}>
-                      {contribution >= 0 ? "+" : ""}{formatPercent(contribution)} contribution
+                      {formatPercent(contribution)} contribution
                     </span>
                   </div>
                   <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
@@ -184,8 +184,8 @@ export default function InsightsPage() {
               <tbody className="divide-y divide-slate-100">
                 <tr>
                   <td className="py-4 text-sm font-medium text-slate-900">Return</td>
-                  <td className="py-4 text-sm text-right text-emerald-600 tabular-nums">+{formatPercent(portfolio.summary.ytdReturn)}</td>
-                  <td className="py-4 text-sm text-right text-slate-600 tabular-nums">+{formatPercent(portfolio.summary.ytdReturn * 0.9)}</td>
+                  <td className="py-4 text-sm text-right text-emerald-600 tabular-nums">{formatPercent(portfolio.summary.ytdReturn)}</td>
+                  <td className="py-4 text-sm text-right text-slate-600 tabular-nums">{formatPercent(portfolio.summary.ytdReturn * 0.9)}</td>
                   <td className="py-4 text-sm text-right text-slate-600 tabular-nums">+24.50%</td>
                 </tr>
                 <tr>

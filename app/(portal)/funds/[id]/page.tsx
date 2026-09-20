@@ -86,7 +86,7 @@ export default function FundDetailPage() {
         <div className="bg-slate-50 rounded-lg p-5">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Daily Change</p>
           <p className={`text-xl font-light tabular-nums mt-1 ${fund.dailyChange >= 0 ? "text-emerald-600" : "text-red-500"}`}>
-            {fund.dailyChange >= 0 ? "+" : ""}{formatPercent(fund.dailyChange)}
+            {formatPercent(fund.dailyChange)}
           </p>
         </div>
         <div className="bg-slate-50 rounded-lg p-5">

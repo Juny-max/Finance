@@ -105,17 +105,17 @@ export default function DashboardPage() {
         </div>
         <div className="flex items-center gap-4 mt-3 text-sm">
           <span className="text-emerald-600 font-medium tabular-nums">
-            +{formatMasked(portfolio.summary.totalGain, balanceHidden)} (+{formatPercent(portfolio.summary.gainPercent)})
+            +{formatMasked(portfolio.summary.totalGain, balanceHidden)} ({formatPercent(portfolio.summary.gainPercent)})
           </span>
           <span className="text-slate-300">|</span>
           <span className="text-slate-500 tabular-nums">
-            +{formatMasked(portfolio.summary.dayChange, balanceHidden)} (+{formatPercent(portfolio.summary.dayChangePercent)}) today
+            +{formatMasked(portfolio.summary.dayChange, balanceHidden)} ({formatPercent(portfolio.summary.dayChangePercent)}) today
           </span>
         </div>
       </div>
 
       {/* 3. QUICK ACTIONS */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div data-tour="quick-actions" className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <button 
           onClick={() => setIsInvestOpen(true)}
           className="flex flex-col items-center justify-center gap-3 p-4 bg-white border border-slate-200/60 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all text-left group"

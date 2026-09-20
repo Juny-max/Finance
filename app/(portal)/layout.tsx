@@ -8,6 +8,7 @@ import { TopBar } from '@/components/layout/TopBar';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { ToastContainer } from '@/components/ui/Toast';
 import { NavigationProgress } from '@/components/ui/NavigationProgress';
+import { PortalTour } from '@/components/ui/PortalTour';
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -47,6 +48,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
       </div>
       
       <ToastContainer />
+      <PortalTour />
     </div>
   );
 }

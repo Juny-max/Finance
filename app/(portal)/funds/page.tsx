@@ -47,7 +47,7 @@ export default function FundsPage() {
                   <div className="flex items-end gap-2 mt-1">
                     <p className="text-2xl font-light text-slate-900 tabular-nums">GH₵ {fund.nav.toFixed(4)}</p>
                     <span className={`text-sm font-medium mb-1 ${fund.dailyChange >= 0 ? "text-emerald-600" : "text-red-500"}`}>
-                      {fund.dailyChange >= 0 ? "+" : ""}{formatPercent(fund.dailyChange)}
+                      {formatPercent(fund.dailyChange)}
                     </span>
                   </div>
                 </div>

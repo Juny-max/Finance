@@ -28,7 +28,7 @@ function computePortfolio(userId: string, funds: Fund[], transactions: Transacti
     if (fiFund) holdingsMap[fiFund.id] = { units: Number((v1 / fiFund.nav).toFixed(2)), invested: 7225000 };
     if (balFund) holdingsMap[balFund.id] = { units: Number((v2 / balFund.nav).toFixed(2)), invested: 3485000 };
     if (globFund) holdingsMap[globFund.id] = { units: Number((v3 / globFund.nav).toFixed(2)), invested: 1729500 };
-  } else {
+  } else if (userId === "usr_kwame") {
     const v1 = 72400;
     const v2 = 51250;
     const v3 = 25000;
@@ -90,9 +90,9 @@ function computePortfolio(userId: string, funds: Fund[], transactions: Transacti
   const summary: PortfolioSummary = {
     totalValue, totalInvested, totalGain,
     gainPercent: totalInvested > 0 ? (totalGain / totalInvested) * 100 : 0,
-    ytdReturn: userId === "usr_gcb" ? 19.4 : 18.6,
-    dayChange: userId === "usr_gcb" ? 12400 : 182.4,
-    dayChangePercent: userId === "usr_gcb" ? 0.08 : 0.12,
+    ytdReturn: userId === "usr_gcb" ? 19.4 : userId === "usr_kwame" ? 18.6 : 0,
+    dayChange: userId === "usr_gcb" ? 12400 : userId === "usr_kwame" ? 182.4 : 0,
+    dayChangePercent: userId === "usr_gcb" ? 0.08 : userId === "usr_kwame" ? 0.12 : 0,
     lastUpdated: "2026-09-09",
   };
 
@@ -307,4 +307,3 @@ export function useStore() {
   if (!ctx) throw new Error("useStore must be used within StoreProvider");
   return ctx;
 }
-

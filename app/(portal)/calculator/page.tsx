@@ -65,12 +65,12 @@ export default function CalculatorPage() {
 
       <div className="grid lg:grid-cols-12 gap-12">
         {/* INPUTS - LEFT SIDE */}
-        <div className="lg:col-span-5 space-y-8">
+        <div className="lg:col-span-5 space-y-6">
           
-          <div>
-            <div className="flex justify-between mb-2">
+          <div className="rounded-lg border border-slate-200/60 bg-white p-4 sm:p-5">
+            <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <label className="text-sm font-medium text-slate-700">Initial investment</label>
-              <span className="text-sm font-semibold text-navy-900 tabular-nums">{formatGHS(initialInvestment)}</span>
+              <span className="text-base font-semibold text-navy-900 tabular-nums sm:text-right">{formatGHS(initialInvestment)}</span>
             </div>
             <input 
               type="range" 
@@ -79,14 +79,15 @@ export default function CalculatorPage() {
               step="500"
               value={initialInvestment}
               onChange={(e) => setInitialInvestment(Number(e.target.value))}
-              className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-navy-900"
+              className="w-full h-3 rounded-lg"
             />
+            <div className="mt-2 flex justify-between text-[11px] text-slate-400"><span>GH₵ 500</span><span>GH₵ 500,000</span></div>
           </div>
 
-          <div>
-            <div className="flex justify-between mb-2">
+          <div className="rounded-lg border border-slate-200/60 bg-white p-4 sm:p-5">
+            <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <label className="text-sm font-medium text-slate-700">Monthly contribution</label>
-              <span className="text-sm font-semibold text-navy-900 tabular-nums">{formatGHS(monthlyContribution)}</span>
+              <span className="text-base font-semibold text-navy-900 tabular-nums sm:text-right">{formatGHS(monthlyContribution)}</span>
             </div>
             <input 
               type="range" 
@@ -95,11 +96,12 @@ export default function CalculatorPage() {
               step="100"
               value={monthlyContribution}
               onChange={(e) => setMonthlyContribution(Number(e.target.value))}
-              className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-navy-900"
+              className="w-full h-3 rounded-lg"
             />
+            <div className="mt-2 flex justify-between text-[11px] text-slate-400"><span>GH₵ 0</span><span>GH₵ 50,000</span></div>
           </div>
 
-          <div>
+          <div className="rounded-lg border border-slate-200/60 bg-white p-4 sm:p-5">
             <label className="text-sm font-medium text-slate-700 block mb-3">Investment period</label>
             <div className="flex flex-wrap gap-2">
               {[1, 3, 5, 10, 15, 20].map((y) => (
@@ -118,7 +120,7 @@ export default function CalculatorPage() {
             </div>
           </div>
 
-          <div>
+          <div className="rounded-lg border border-slate-200/60 bg-white p-4 sm:p-5">
             <label className="text-sm font-medium text-slate-700 block mb-3">Expected annual return</label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
               <button
@@ -157,7 +159,7 @@ export default function CalculatorPage() {
             </div>
             
             <div className="mt-4">
-              <div className="flex justify-between mb-2">
+              <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                 <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Custom return rate</label>
                 <span className="text-sm font-semibold text-navy-900 tabular-nums">{expectedReturn}%</span>
               </div>
@@ -168,12 +170,12 @@ export default function CalculatorPage() {
                 step="1"
                 value={expectedReturn}
                 onChange={(e) => setExpectedReturn(Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-navy-900"
+                className="w-full h-3 rounded-lg"
               />
             </div>
           </div>
           
-          <div className="bg-slate-50 rounded-lg p-4 mt-6">
+          <div className="bg-slate-50 rounded-lg p-4">
             <p className="text-xs text-slate-500 italic">
               Illustrative projection — not guaranteed. Past performance does not guarantee future returns. Actual returns may vary depending on market conditions and specific fund performance.
             </p>
@@ -183,16 +185,16 @@ export default function CalculatorPage() {
         {/* RESULTS - RIGHT SIDE */}
         <div className="lg:col-span-7 space-y-8">
           
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 p-6 bg-white border border-slate-200/60 rounded-lg">
-            <div>
+          <div className="grid grid-cols-1 divide-y divide-slate-100 overflow-hidden rounded-lg border border-slate-200/60 bg-white sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+            <div className="min-w-0 p-5">
               <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total contributions</p>
               <p className="text-2xl font-light text-slate-900 tabular-nums mt-1">{formatGHS(finalYear.contributions)}</p>
             </div>
-            <div>
+            <div className="min-w-0 p-5">
               <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Estimated growth</p>
               <p className="text-2xl font-light text-emerald-600 tabular-nums mt-1">+{formatGHS(finalYear.growth)}</p>
             </div>
-            <div>
+            <div className="min-w-0 p-5 sm:col-span-2 sm:border-t sm:border-slate-100">
               <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Projected value</p>
               <p className="text-3xl font-semibold text-navy-900 tabular-nums mt-1">{formatGHS(finalYear.total)}</p>
             </div>
