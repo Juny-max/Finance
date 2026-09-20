@@ -11,7 +11,7 @@ interface AuthContextType {
   users: User[];
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => { success: boolean; error?: string };
+  login: (email: string, password: string) => { success: boolean; user?: User; error?: string };
   signup: (data: {
     firstName: string;
     lastName: string;
@@ -33,13 +33,36 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<AuthSession | null>(null);
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>(() => seedUsers as User[]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Initialize on mount
   useEffect(() => {
     const storedSession = loadFromStorage<AuthSession | null>(STORAGE_KEYS.SESSION, null);
-    setUsers(loadFromStorage<User[]>(STORAGE_KEYS.USERS, seedUsers as User[]));
+    const storedUsers = loadFromStorage<User[]>(STORAGE_KEYS.USERS, seedUsers as User[]);
+
+    // Ensure all seed accounts (especially admin and demo accounts) exist
+    const seedList = seedUsers as User[];
+    const userMap = new Map<string, User>();
+    for (const su of seedList) {
+      userMap.set(su.email.toLowerCase(), su);
+    }
+    for (const u of storedUsers) {
+      if (!userMap.has(u.email.toLowerCase())) {
+        userMap.set(u.email.toLowerCase(), u);
+      } else {
+        const seedMatch = userMap.get(u.email.toLowerCase())!;
+        userMap.set(u.email.toLowerCase(), {
+          ...u,
+          password: seedMatch.password,
+          role: seedMatch.role,
+        });
+      }
+    }
+    const merged = Array.from(userMap.values());
+    setUsers(merged);
+    saveToStorage(STORAGE_KEYS.USERS, merged);
+
     if (storedSession) {
       setSession(storedSession);
     }
@@ -64,13 +87,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  const rawUser = session ? (users.find((u) => u.id === session.userId) || null) : null;
+  const rawUser = session ? (users.find((u) => u.id === session.userId) || (seedUsers as User[]).find((u) => u.id === session.userId) || null) : null;
   const user = rawUser ? { ...rawUser, name: `${rawUser.firstName} ${rawUser.lastName}` } : null;
 
   const login = useCallback((email: string, password: string) => {
-    const found = users.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+    const cleanEmail = email.trim().toLowerCase();
+    const candidateList = users.length > 0 ? users : (seedUsers as User[]);
+    let found = candidateList.find(
+      (u) => u.email.toLowerCase() === cleanEmail && u.password === password
     );
+    if (!found) {
+      found = (seedUsers as User[]).find(
+        (u) => u.email.toLowerCase() === cleanEmail && u.password === password
+      );
+    }
     if (!found) {
       return { success: false, error: "Invalid email or password." };
     }
@@ -84,7 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     setSession(newSession);
     saveToStorage(STORAGE_KEYS.SESSION, newSession);
-    return { success: true };
+    return { success: true, user: found };
   }, [users]);
 
   const signup = useCallback(
@@ -164,7 +194,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const switchPersona = useCallback((userId: string) => {
-    const found = users.find((u) => u.id === userId);
+    let found = users.find((u) => u.id === userId);
+    if (!found) {
+      found = (seedUsers as User[]).find((u) => u.id === userId);
+    }
     if (!found) return;
     const newSession: AuthSession = {
       userId: found.id,

@@ -27,10 +27,25 @@ export default function LoginPage() {
 
     setIsLoading(true);
     try {
-      login(email, password);
+      const res = login(email, password);
+      if (!res.success) {
+        setIsLoading(false);
+        setError(res.error || 'Invalid email or password.');
+        return;
+      }
+
+      const isAdmin = 
+        res.user?.role === 'admin' || 
+        res.user?.id === 'usr_admin' || 
+        email.trim().toLowerCase().includes('admin');
+
       setTimeout(() => {
-        router.push('/');
-      }, 350);
+        if (isAdmin) {
+          router.push('/admin');
+        } else {
+          router.push('/');
+        }
+      }, 200);
     } catch (err) {
       setIsLoading(false);
       setError('Login failed. Please check your credentials.');

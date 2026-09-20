@@ -11,16 +11,20 @@ import { NavigationProgress } from '@/components/ui/NavigationProgress';
 import { PortalTour } from '@/components/ui/PortalTour';
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/login');
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        router.push('/login');
+      } else if (user?.role === 'admin' || user?.id === 'usr_admin' || user?.email === 'admin@auraasset.com') {
+        router.push('/admin');
+      }
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, isLoading, user, router]);
 
-  if (!isAuthenticated) {
+  if (isLoading || !isAuthenticated || (user?.role === 'admin' || user?.id === 'usr_admin' || user?.email === 'admin@auraasset.com')) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="w-8 h-8 border-4 border-slate-200 border-t-navy-900 rounded-full animate-spin"></div>
