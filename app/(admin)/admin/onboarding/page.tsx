@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   ShieldCheck,
@@ -55,9 +55,9 @@ function StatusBadge({ status }: { status: OnboardingApplication['status'] }) {
   );
 }
 
-// ── main component ──────────────────────────────────────────────────────────
+// ── main content ────────────────────────────────────────────────────────────
 
-export default function AdminOnboardingPage() {
+function AdminOnboardingContent() {
   const searchParams = useSearchParams();
   const selectParam = searchParams.get('select');
 
@@ -439,3 +439,18 @@ export default function AdminOnboardingPage() {
     </div>
   );
 }
+
+export default function AdminOnboardingPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-64 items-center justify-center">
+          <div className="w-8 h-8 border-4 border-slate-200 border-t-navy-900 rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <AdminOnboardingContent />
+    </Suspense>
+  );
+}
+
