@@ -8,25 +8,25 @@ import { NavigationProgress } from '@/components/ui/NavigationProgress';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-100/70">
+    <div className="flex h-screen overflow-hidden bg-slate-50">
       <NavigationProgress />
-      
+
       {/* Desktop Sidebar */}
       <div className="hidden lg:block">
         <AdminSidebar />
       </div>
-      
-      {/* Main Back-Office Content Area */}
+
+      {/* Main Content Area */}
       <div className="flex-1 flex flex-col w-full lg:ml-64">
         <AdminTopBar />
-        
-        <main className="flex-1 overflow-y-auto bg-slate-100/70">
+
+        <main className="flex-1 overflow-y-auto bg-slate-50">
           <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-7xl mx-auto">
             {children}
           </div>
         </main>
       </div>
-      
+
       <ToastContainer />
     </div>
   );

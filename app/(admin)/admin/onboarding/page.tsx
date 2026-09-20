@@ -2,27 +2,60 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { 
-  ShieldCheck, 
-  Funnel, 
-  MagnifyingGlass, 
-  Check, 
-  X, 
-  FileText, 
-  Eye, 
-  CheckCircle, 
-  Clock, 
+import {
+  ShieldCheck,
+  Funnel,
+  MagnifyingGlass,
+  Check,
+  X,
+  FileText,
+  Eye,
+  CheckCircle,
+  Clock,
   XCircle,
   DeviceMobile,
   Bank,
   Buildings,
   User,
   Users,
-  CaretRight
+  CaretRight,
 } from '@phosphor-icons/react';
 import { useStore } from '@/lib/store';
 import type { OnboardingApplication } from '@/lib/types';
 import { formatDate } from '@/lib/formatters';
+
+// ── helpers ────────────────────────────────────────────────────────────────
+
+function formatGHS(amount: number) {
+  return new Intl.NumberFormat('en-GH', { style: 'currency', currency: 'GHS' }).format(amount);
+}
+
+function StatusBadge({ status }: { status: OnboardingApplication['status'] }) {
+  if (status === 'pending_review') {
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-md border bg-amber-50 text-amber-700 border-amber-200">
+        <Clock size={11} weight="bold" />
+        Pending
+      </span>
+    );
+  }
+  if (status === 'approved') {
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-md border bg-emerald-50 text-emerald-700 border-emerald-200">
+        <CheckCircle size={11} weight="bold" />
+        Approved
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-md border bg-red-50 text-red-700 border-red-200">
+      <XCircle size={11} weight="bold" />
+      Rejected
+    </span>
+  );
+}
+
+// ── main component ──────────────────────────────────────────────────────────
 
 export default function AdminOnboardingPage() {
   const searchParams = useSearchParams();
@@ -63,372 +96,340 @@ export default function AdminOnboardingPage() {
     approveApplication(appId, reviewNote || undefined);
     setReviewNote('');
     // Keep inspected modal updated
-    setSelectedApp((prev) => prev && prev.id === appId ? { ...prev, status: 'approved', reviewedBy: 'Audrey Mensah (Compliance Officer)' } : prev);
+    setSelectedApp((prev) =>
+      prev && prev.id === appId
+        ? { ...prev, status: 'approved', reviewedBy: 'Audrey Mensah (Compliance Officer)' }
+        : prev,
+    );
   };
 
   const handleReject = (appId: string) => {
     rejectApplication(appId, reviewNote || 'Documentation incomplete.');
     setReviewNote('');
-    setSelectedApp((prev) => prev && prev.id === appId ? { ...prev, status: 'rejected', reviewedBy: 'Audrey Mensah (Compliance Officer)' } : prev);
+    setSelectedApp((prev) =>
+      prev && prev.id === appId
+        ? { ...prev, status: 'rejected', reviewedBy: 'Audrey Mensah (Compliance Officer)' }
+        : prev,
+    );
   };
+
+  // ── status filter tabs config ─────────────────────────────────────────
+  const statusTabs: { value: 'all' | 'pending_review' | 'approved' | 'rejected'; label: string }[] = [
+    { value: 'all', label: 'All' },
+    { value: 'pending_review', label: 'Pending' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'rejected', label: 'Rejected' },
+  ];
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">KYC & Digital Onboarding Desk</h1>
-            <span className="px-2.5 py-0.5 text-xs font-semibold bg-navy-100 text-navy-900 rounded-full">
-              {applications.filter((a) => a.status === 'pending_review').length} Pending Review
-            </span>
-          </div>
-          <p className="text-sm text-slate-500 mt-1">
-            Review identity documents, verify Mobile Money & Bank mandates, and issue investor accounts under SEC Ghana guidelines.
-          </p>
-        </div>
+      {/* ── Page header ─────────────────────────────────────────────────── */}
+      <div>
+        <h1 className="text-xl font-semibold text-slate-900">KYC &amp; Onboarding</h1>
+        <p className="text-sm text-slate-500 mt-0.5">Review and approve client applications</p>
       </div>
 
-      {/* Filter Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-        {/* Search */}
-        <div className="relative w-full md:w-80">
-          <MagnifyingGlass size={18} weight="bold" className="absolute left-3 top-2.5 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search applicant, reference, or email..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-10 pl-9 pr-3 text-xs border border-slate-200 rounded-lg bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-navy-900"
-          />
-        </div>
+      {/* ── Two-panel layout ────────────────────────────────────────────── */}
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
+        {/* ── LEFT PANEL — application list (40%) ─────────────────────── */}
+        <div className="w-full lg:w-[40%] bg-white rounded-lg border border-slate-200/60 shadow-sm overflow-hidden">
+          {/* Search + filters */}
+          <div className="p-4 border-b border-slate-100 space-y-3">
+            {/* Search */}
+            <div className="relative">
+              <MagnifyingGlass size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search applicant, reference or email…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-9 pl-8 pr-3 text-xs border border-slate-200 rounded-md bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-navy-900 placeholder:text-slate-400"
+              />
+            </div>
 
-        {/* Filters */}
-        <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
-          {/* Status Pills */}
-          {(['all', 'pending_review', 'approved', 'rejected'] as const).map((status) => (
-            <button
-              key={status}
-              onClick={() => setFilterStatus(status)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap ${
-                filterStatus === status
-                  ? 'bg-navy-900 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              {status === 'all' && 'All Applications'}
-              {status === 'pending_review' && 'Pending Review'}
-              {status === 'approved' && 'Approved'}
-              {status === 'rejected' && 'Rejected'}
-            </button>
-          ))}
+            {/* Status pills + category select */}
+            <div className="flex flex-wrap items-center gap-2">
+              {statusTabs.map((tab) => (
+                <button
+                  key={tab.value}
+                  onClick={() => setFilterStatus(tab.value)}
+                  className={`px-3 py-1 text-xs rounded-md transition-colors whitespace-nowrap ${
+                    filterStatus === tab.value
+                      ? 'bg-navy-900 text-white'
+                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
 
-          <div className="h-6 w-px bg-slate-200 mx-1 hidden sm:block" />
-
-          {/* Category Dropdown */}
-          <select
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            className="h-9 px-3 text-xs border border-slate-200 rounded-lg bg-slate-50 focus:bg-white text-slate-700"
-          >
-            <option value="all">All Categories</option>
-            <option value="Individual">Individual</option>
-            <option value="Joint Account">Joint Account</option>
-            <option value="Institution">Institution</option>
-            <option value="Collective Investment Scheme">Collective Investment Scheme</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Main Content Split: Left List, Right Inspector */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Applications List (5 cols) */}
-        <div className="lg:col-span-5 bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
-          <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Applications ({filteredApps.length})
-            </span>
-            <span className="text-[11px] text-slate-400">Click to inspect</span>
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="h-7 px-2 text-xs border border-slate-200 rounded-md bg-white text-slate-600 focus:outline-none focus:ring-1 focus:ring-navy-900 ml-auto"
+              >
+                <option value="all">All Categories</option>
+                <option value="Individual">Individual</option>
+                <option value="Joint Account">Joint Account</option>
+                <option value="Institution">Institution</option>
+                <option value="Collective Investment Scheme">CIS</option>
+              </select>
+            </div>
           </div>
 
-          <div className="divide-y divide-slate-100 max-h-[700px] overflow-y-auto">
+          {/* List header count */}
+          <div className="px-4 py-2 flex items-center justify-between border-b border-slate-100">
+            <span className="text-xs text-slate-500">
+              {filteredApps.length} application{filteredApps.length !== 1 ? 's' : ''}
+            </span>
+            <span className="text-xs text-slate-400">Click to inspect</span>
+          </div>
+
+          {/* App rows */}
+          <div className="max-h-[620px] overflow-y-auto divide-y divide-slate-100">
             {filteredApps.length === 0 ? (
-              <div className="p-8 text-center text-slate-500 text-xs">
-                No onboarding applications match your current filters.
+              <div className="py-12 text-center text-xs text-slate-400">
+                No applications match your filters.
               </div>
             ) : (
               filteredApps.map((app) => {
                 const isSelected = selectedApp?.id === app.id;
                 return (
-                  <button
+                  <div
                     key={app.id}
                     onClick={() => setSelectedApp(app)}
-                    className={`w-full text-left p-4 transition-colors flex items-start justify-between gap-3 ${
+                    className={`py-3 px-4 cursor-pointer flex items-center justify-between gap-3 transition-colors ${
                       isSelected
-                        ? 'bg-navy-50/70 border-l-4 border-navy-900'
-                        : 'hover:bg-slate-50/80 border-l-4 border-transparent'
+                        ? 'bg-slate-50 border-l-2 border-navy-900'
+                        : 'hover:bg-slate-50 border-l-2 border-transparent'
                     }`}
                   >
-                    <div className="space-y-1 min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-sm text-slate-900 truncate">
-                          {app.applicantName}
-                        </span>
-                        <span className="text-[10px] font-mono text-slate-400">
-                          {app.reference}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-2 text-xs text-slate-500">
-                        <span>{app.accountCategory}</span>
-                        <span>·</span>
-                        <span className="flex items-center gap-1">
-                          {app.fundingMethod === 'Mobile Money' ? (
-                            <DeviceMobile size={13} weight="bold" className="text-amber-600" />
-                          ) : (
-                            <Bank size={13} weight="bold" className="text-blue-600" />
-                          )}
-                          {app.fundingMethod}
-                        </span>
-                      </div>
-
-                      <div className="text-[11px] text-slate-400">
-                        Submitted: {new Date(app.submittedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      </div>
+                    <div className="min-w-0 flex-1 space-y-0.5">
+                      <p className="text-sm font-medium text-slate-900 truncate">{app.applicantName}</p>
+                      <p className="text-xs font-mono text-slate-400">{app.reference}</p>
+                      <p className="text-xs text-slate-500">{app.accountCategory}</p>
                     </div>
-
-                    <div className="flex flex-col items-end gap-1.5 shrink-0">
-                      {app.status === 'pending_review' && (
-                        <span className="px-2 py-0.5 text-[10px] font-semibold bg-amber-100 text-amber-800 rounded-full flex items-center gap-1">
-                          <Clock size={12} weight="bold" /> Pending
-                        </span>
-                      )}
-                      {app.status === 'approved' && (
-                        <span className="px-2 py-0.5 text-[10px] font-semibold bg-emerald-100 text-emerald-800 rounded-full flex items-center gap-1">
-                          <CheckCircle size={12} weight="bold" /> Approved
-                        </span>
-                      )}
-                      {app.status === 'rejected' && (
-                        <span className="px-2 py-0.5 text-[10px] font-semibold bg-red-100 text-red-800 rounded-full flex items-center gap-1">
-                          <XCircle size={12} weight="bold" /> Rejected
-                        </span>
-                      )}
-                      <CaretRight size={14} className="text-slate-400 mt-1" />
+                    <div className="shrink-0">
+                      <StatusBadge status={app.status} />
                     </div>
-                  </button>
+                  </div>
                 );
               })
             )}
           </div>
         </div>
 
-        {/* Detailed Application Inspector (7 cols) */}
-        <div className="lg:col-span-7 bg-white rounded-xl border border-slate-200/80 shadow-sm p-6 space-y-6">
-          {selectedApp ? (
-            <>
-              {/* Top Banner */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-xl font-bold text-slate-900">{selectedApp.applicantName}</h2>
-                    <span className="text-xs font-mono font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
-                      {selectedApp.reference}
-                    </span>
+        {/* ── RIGHT PANEL — inspector (60%) ───────────────────────────── */}
+        <div className="w-full lg:w-[60%]">
+          {!selectedApp ? (
+            <div className="bg-white rounded-lg border border-slate-200/60 shadow-sm flex items-center justify-center h-64">
+              <p className="text-sm text-slate-400">Select an application to view details</p>
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg border border-slate-200/60 shadow-sm p-6 space-y-6">
+              {/* ── App header ──────────────────────────────────────────── */}
+              <div>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h2 className="text-lg font-semibold text-slate-900">{selectedApp.applicantName}</h2>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs font-mono text-slate-400">{selectedApp.reference}</span>
+                      <span className="text-xs text-slate-300">·</span>
+                      <span className="text-xs text-slate-500">
+                        Submitted{' '}
+                        {new Date(selectedApp.submittedAt).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                      </span>
+                    </div>
                   </div>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    Category: <strong className="text-slate-800">{selectedApp.accountCategory}</strong> · Submitted {new Date(selectedApp.submittedAt).toLocaleString()}
-                  </p>
-                </div>
-
-                <div>
-                  {selectedApp.status === 'pending_review' && (
-                    <span className="px-3 py-1 text-xs font-semibold bg-amber-100 text-amber-800 rounded-full">
-                      Pending Compliance Sign-Off
-                    </span>
-                  )}
-                  {selectedApp.status === 'approved' && (
-                    <span className="px-3 py-1 text-xs font-semibold bg-emerald-100 text-emerald-800 rounded-full">
-                      Account Verified & Active
-                    </span>
-                  )}
-                  {selectedApp.status === 'rejected' && (
-                    <span className="px-3 py-1 text-xs font-semibold bg-red-100 text-red-800 rounded-full">
-                      Application Declined
-                    </span>
-                  )}
+                  <StatusBadge status={selectedApp.status} />
                 </div>
               </div>
 
-              {/* Section 1: Applicant & Mandate Profile */}
-              <div className="space-y-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Applicant Details & Mandate</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-lg border border-slate-200/60 text-xs">
+              <hr className="border-slate-100" />
+
+              {/* ── Detail fields grid ──────────────────────────────────── */}
+              <div>
+                <p className="text-xs text-slate-500 uppercase tracking-wide mb-3">Application Details</p>
+                <dl className="grid grid-cols-2 gap-x-6 gap-y-4">
                   <div>
-                    <span className="text-slate-400">Email Address:</span>
-                    <p className="font-semibold text-slate-800 mt-0.5">{selectedApp.email}</p>
+                    <dt className="text-xs text-slate-500 uppercase tracking-wide">Account Type</dt>
+                    <dd className="text-sm text-slate-900 font-medium mt-0.5">{selectedApp.accountCategory}</dd>
                   </div>
                   <div>
-                    <span className="text-slate-400">Primary Phone:</span>
-                    <p className="font-semibold text-slate-800 mt-0.5">{selectedApp.phone}</p>
+                    <dt className="text-xs text-slate-500 uppercase tracking-wide">Risk Profile</dt>
+                    <dd className="text-sm text-slate-900 font-medium mt-0.5 capitalize">{selectedApp.riskProfile}</dd>
                   </div>
                   <div>
-                    <span className="text-slate-400">Risk Profile:</span>
-                    <p className="font-semibold text-slate-800 mt-0.5 capitalize">{selectedApp.riskProfile}</p>
+                    <dt className="text-xs text-slate-500 uppercase tracking-wide">Investment Goal</dt>
+                    <dd className="text-sm text-slate-900 font-medium mt-0.5">{selectedApp.managementStyle}</dd>
                   </div>
                   <div>
-                    <span className="text-slate-400">Portfolio Style:</span>
-                    <p className="font-semibold text-slate-800 mt-0.5">{selectedApp.managementStyle}</p>
+                    <dt className="text-xs text-slate-500 uppercase tracking-wide">Source of Funds</dt>
+                    <dd className="text-sm text-slate-900 font-medium mt-0.5">
+                      {selectedApp.sourceOfFunds || 'Personal remuneration'}
+                    </dd>
                   </div>
                   <div>
-                    <span className="text-slate-400">Source of Funds:</span>
-                    <p className="font-semibold text-slate-800 mt-0.5">{selectedApp.sourceOfFunds || 'Personal remuneration'}</p>
+                    <dt className="text-xs text-slate-500 uppercase tracking-wide">Email</dt>
+                    <dd className="text-sm text-slate-900 font-medium mt-0.5">{selectedApp.email}</dd>
                   </div>
                   <div>
-                    <span className="text-slate-400">Statement Dispatch:</span>
-                    <p className="font-semibold text-slate-800 mt-0.5">{selectedApp.statementDelivery || 'Email'} ({selectedApp.statementFrequency || 'Monthly'})</p>
+                    <dt className="text-xs text-slate-500 uppercase tracking-wide">Phone</dt>
+                    <dd className="text-sm text-slate-900 font-medium mt-0.5">{selectedApp.phone}</dd>
                   </div>
-                </div>
+                  <div>
+                    <dt className="text-xs text-slate-500 uppercase tracking-wide">Statement Delivery</dt>
+                    <dd className="text-sm text-slate-900 font-medium mt-0.5">
+                      {selectedApp.statementDelivery || 'Email'} ({selectedApp.statementFrequency || 'Monthly'})
+                    </dd>
+                  </div>
+                </dl>
               </div>
 
-              {/* Section 2: Funding Route Verification */}
-              <div className="space-y-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                  Funding Channel & Settlement Mandate
-                </h3>
-                <div className="bg-slate-50 p-4 rounded-lg border border-slate-200/60 space-y-2 text-xs">
-                  <div className="flex items-center gap-2 font-semibold text-slate-800">
-                    {selectedApp.fundingMethod === 'Mobile Money' ? (
-                      <>
-                        <DeviceMobile size={18} weight="bold" className="text-amber-600" />
-                        <span>Mobile Money — {selectedApp.momoNetwork || 'MTN Mobile Money'}</span>
-                      </>
-                    ) : (
-                      <>
-                        <Bank size={18} weight="bold" className="text-blue-600" />
-                        <span>Direct Bank Wire — {selectedApp.bankName || 'Stanbic Bank Ghana'}</span>
-                      </>
-                    )}
-                  </div>
+              <hr className="border-slate-100" />
 
+              {/* ── Funding channel ─────────────────────────────────────── */}
+              <div>
+                <p className="text-xs text-slate-500 uppercase tracking-wide mb-3">Funding Channel</p>
+                <div className="flex items-center gap-2 mb-3">
                   {selectedApp.fundingMethod === 'Mobile Money' ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                      <div>
-                        <span className="text-slate-400">Subscriber Name:</span>
-                        <p className="font-semibold text-slate-900 font-mono mt-0.5">{selectedApp.momoAccountName || selectedApp.applicantName}</p>
-                      </div>
-                      <div>
-                        <span className="text-slate-400">MoMo Phone Number:</span>
-                        <p className="font-semibold text-slate-900 font-mono mt-0.5">{selectedApp.momoNumber || selectedApp.phone}</p>
-                      </div>
-                      <div>
-                        <span className="text-slate-400">Wallet Type:</span>
-                        <p className="font-semibold text-slate-900 mt-0.5">{selectedApp.momoWalletType || 'Subscriber / Personal'}</p>
-                      </div>
-                    </div>
+                    <DeviceMobile size={16} className="text-slate-600" />
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                      <div>
-                        <span className="text-slate-400">Account Name:</span>
-                        <p className="font-semibold text-slate-900 font-mono mt-0.5">{selectedApp.bankAccountName || selectedApp.applicantName}</p>
-                      </div>
-                      <div>
-                        <span className="text-slate-400">Account Number:</span>
-                        <p className="font-semibold text-slate-900 font-mono mt-0.5">{selectedApp.bankAccountNumber || '9040001234567'}</p>
-                      </div>
-                      <div>
-                        <span className="text-slate-400">Branch:</span>
-                        <p className="font-semibold text-slate-900 mt-0.5">{selectedApp.bankBranch || 'Airport City'}</p>
-                      </div>
-                    </div>
+                    <Bank size={16} className="text-slate-600" />
                   )}
+                  <span className="text-sm font-medium text-slate-900">{selectedApp.fundingMethod}</span>
+                </div>
 
-                  <div className="mt-2 pt-2 border-t border-slate-200/60 text-[11px] text-emerald-700 flex items-center gap-1.5 font-medium">
-                    <CheckCircle size={14} weight="bold" />
-                    <span>Registered name confirmed against Ghana Card identification match.</span>
-                  </div>
+                {selectedApp.fundingMethod === 'Mobile Money' ? (
+                  <dl className="grid grid-cols-2 gap-x-6 gap-y-4">
+                    <div>
+                      <dt className="text-xs text-slate-500 uppercase tracking-wide">Network</dt>
+                      <dd className="text-sm text-slate-900 font-medium mt-0.5">
+                        {selectedApp.momoNetwork || 'MTN Mobile Money'}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-xs text-slate-500 uppercase tracking-wide">MoMo Number</dt>
+                      <dd className="text-sm text-slate-900 font-medium font-mono mt-0.5">
+                        {selectedApp.momoNumber || selectedApp.phone}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-xs text-slate-500 uppercase tracking-wide">Subscriber Name</dt>
+                      <dd className="text-sm text-slate-900 font-medium mt-0.5">
+                        {selectedApp.momoAccountName || selectedApp.applicantName}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-xs text-slate-500 uppercase tracking-wide">Wallet Type</dt>
+                      <dd className="text-sm text-slate-900 font-medium mt-0.5">
+                        {selectedApp.momoWalletType || 'Subscriber / Personal'}
+                      </dd>
+                    </div>
+                  </dl>
+                ) : (
+                  <dl className="grid grid-cols-2 gap-x-6 gap-y-4">
+                    <div>
+                      <dt className="text-xs text-slate-500 uppercase tracking-wide">Bank</dt>
+                      <dd className="text-sm text-slate-900 font-medium mt-0.5">
+                        {selectedApp.bankName || 'Stanbic Bank Ghana'}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-xs text-slate-500 uppercase tracking-wide">Account Number</dt>
+                      <dd className="text-sm text-slate-900 font-medium font-mono mt-0.5">
+                        {selectedApp.bankAccountNumber || '9040001234567'}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-xs text-slate-500 uppercase tracking-wide">Account Name</dt>
+                      <dd className="text-sm text-slate-900 font-medium mt-0.5">
+                        {selectedApp.bankAccountName || selectedApp.applicantName}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-xs text-slate-500 uppercase tracking-wide">Branch</dt>
+                      <dd className="text-sm text-slate-900 font-medium mt-0.5">
+                        {selectedApp.bankBranch || 'Airport City'}
+                      </dd>
+                    </div>
+                  </dl>
+                )}
+              </div>
+
+              <hr className="border-slate-100" />
+
+              {/* ── KYC documents ───────────────────────────────────────── */}
+              <div>
+                <p className="text-xs text-slate-500 uppercase tracking-wide mb-3">KYC Documents</p>
+                <div className="grid grid-cols-3 gap-3">
+                  {['National ID (Ghana Card)', 'Proof of Address', 'Passport / Mandate'].map((doc) => (
+                    <div
+                      key={doc}
+                      className="flex items-center gap-2 p-3 rounded-lg border border-slate-200/60 bg-slate-50"
+                    >
+                      <FileText size={14} className="text-slate-500 shrink-0" />
+                      <span className="text-xs text-slate-700 leading-tight">{doc}</span>
+                      <CheckCircle size={13} className="text-emerald-600 ml-auto shrink-0" weight="fill" />
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Section 3: Statutory KYC Documents Attached */}
-              <div className="space-y-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Statutory Documents (SEC Compliant)</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
-                      <FileText size={18} weight="bold" className="text-navy-900" />
-                      <span>National ID (Ghana Card)</span>
-                    </div>
-                    <span className="text-emerald-600 font-bold">✓ Attached</span>
-                  </div>
+              <hr className="border-slate-100" />
 
-                  <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
-                      <FileText size={18} weight="bold" className="text-navy-900" />
-                      <span>Proof of Address</span>
-                    </div>
-                    <span className="text-emerald-600 font-bold">✓ Attached</span>
-                  </div>
-
-                  <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
-                      <FileText size={18} weight="bold" className="text-navy-900" />
-                      <span>Passport Photo / Mandate</span>
-                    </div>
-                    <span className="text-emerald-600 font-bold">✓ Attached</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Section 4: Compliance Officer Sign-Off & Audit */}
-              <div className="pt-4 border-t border-slate-200 space-y-4">
-                <div className="space-y-2">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
-                    Compliance Verification Notes
+              {/* ── Review note + actions ────────────────────────────────── */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs text-slate-500 uppercase tracking-wide mb-1.5">
+                    Review note
                   </label>
                   <textarea
-                    rows={2}
-                    placeholder="Enter compliance remarks, NIA validation code, or document checklist notes..."
+                    rows={3}
+                    placeholder="Enter compliance remarks or document checklist notes…"
                     value={reviewNote}
                     onChange={(e) => setReviewNote(e.target.value)}
-                    className="w-full text-xs p-3 border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-navy-900"
+                    className="w-full text-xs p-3 border border-slate-200 rounded-md bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-navy-900 resize-none placeholder:text-slate-400"
                   />
                   {selectedApp.complianceNotes && (
-                    <p className="text-[11px] text-slate-500 italic bg-amber-50 p-2 rounded border border-amber-200/50">
-                      Audit Note: {selectedApp.complianceNotes}
+                    <p className="mt-1.5 text-xs text-slate-500 italic">
+                      Audit note: {selectedApp.complianceNotes}
                     </p>
                   )}
                 </div>
 
-                <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                  <div className="text-[11px] text-slate-400">
-                    {selectedApp.reviewedBy && (
-                      <span>Reviewed by: <strong className="text-slate-600">{selectedApp.reviewedBy}</strong></span>
-                    )}
-                  </div>
+                <div className="flex items-center justify-between gap-3">
+                  {selectedApp.reviewedBy ? (
+                    <p className="text-xs text-slate-400">
+                      Reviewed by <span className="text-slate-600">{selectedApp.reviewedBy}</span>
+                    </p>
+                  ) : (
+                    <span />
+                  )}
 
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => handleReject(selectedApp.id)}
-                      disabled={selectedApp.status === 'rejected'}
-                      className="px-4 py-2 text-xs font-semibold text-red-700 bg-red-50 hover:bg-red-100 rounded-lg border border-red-200 transition-colors disabled:opacity-50"
-                    >
-                      Reject Application
-                    </button>
-                    <button
-                      onClick={() => handleApprove(selectedApp.id)}
-                      disabled={selectedApp.status === 'approved'}
-                      className="inline-flex items-center gap-1.5 px-5 py-2 text-xs font-semibold text-white bg-emerald-700 hover:bg-emerald-800 rounded-lg transition-colors shadow-sm disabled:opacity-50"
-                    >
-                      <Check size={16} weight="bold" />
-                      <span>Approve & Issue Account</span>
-                    </button>
-                  </div>
+                  {selectedApp.status === 'pending_review' && (
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleReject(selectedApp.id)}
+                        className="h-9 px-4 text-sm rounded-md bg-white border border-red-200 text-red-700 hover:bg-red-50 transition-colors"
+                      >
+                        Reject
+                      </button>
+                      <button
+                        onClick={() => handleApprove(selectedApp.id)}
+                        className="h-9 px-4 text-sm rounded-md bg-navy-900 text-white hover:bg-navy-800 transition-colors inline-flex items-center gap-1.5"
+                      >
+                        <Check size={14} weight="bold" />
+                        Approve
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
-            </>
-          ) : (
-            <div className="py-24 text-center text-slate-400 text-sm">
-              Select an application from the queue to view full applicant and compliance data.
             </div>
           )}
         </div>

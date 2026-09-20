@@ -2,75 +2,56 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { 
-  MagnifyingGlass, 
-  Bell, 
-  ArrowSquareOut,
-  CalendarCheck,
-  ShieldCheck
-} from '@phosphor-icons/react';
+import { MagnifyingGlass, Bell, ArrowSquareOut } from '@phosphor-icons/react';
 import { useStore } from '@/lib/store';
 
 export function AdminTopBar() {
   const { applications, allTransactions } = useStore();
 
   const pendingApps = applications.filter((a) => a.status === 'pending_review').length;
-  const pendingTxns = allTransactions.filter((t) => t.status === 'processing' || t.status === 'pending').length;
+  const pendingTxns = allTransactions.filter(
+    (t) => t.status === 'processing' || t.status === 'pending'
+  ).length;
   const totalActionItems = pendingApps + pendingTxns;
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200/80 flex items-center justify-between px-6 sticky top-0 z-20">
-      {/* Mobile Brand / Left Details */}
-      <div className="flex items-center gap-4">
-        <Link href="/admin" className="lg:hidden flex items-center gap-2">
-          <Image
-            src="/logo-without text.png"
-            alt="Aura Logo"
-            width={26}
-            height={26}
-            className="w-6.5 h-6.5 object-contain"
-          />
-          <span className="text-sm font-semibold text-navy-900 tracking-wider">AURA OPS</span>
-        </Link>
-
-        {/* Settlement Cycle Indicator */}
-        <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500 bg-slate-100/80 px-3 py-1.5 rounded-full border border-slate-200/60">
-          <CalendarCheck size={16} weight="bold" className="text-navy-900" />
-          <span>Settlement Date: <strong className="text-slate-800 font-semibold">20 Sep 2026</strong></span>
-          <span className="text-slate-300">|</span>
-          <span className="flex items-center gap-1 text-emerald-700 font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            T+2 Mandatory SEC Clearing
-          </span>
-        </div>
-      </div>
+    <header className="h-14 bg-white border-b border-slate-200/60 flex items-center justify-between px-6 sticky top-0 z-20">
+      {/* Left: Section Label */}
+      <span className="text-sm text-slate-500">Operations Desk</span>
 
       {/* Right Side Controls */}
       <div className="flex items-center gap-4">
-        {/* Quick Search */}
-        <div className="hidden md:flex items-center relative">
-          <MagnifyingGlass size={16} weight="bold" className="absolute left-3 text-slate-400" />
+        {/* Search */}
+        <div className="relative hidden md:block">
+          <MagnifyingGlass
+            size={14}
+            weight="bold"
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+          />
           <input
             type="text"
-            placeholder="Search by client, ID, or ref..."
-            className="h-9 pl-9 pr-3 text-xs border border-slate-200 rounded-md w-60 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-navy-900 focus:border-navy-900"
+            placeholder="Search clients, refs..."
+            className="h-8 w-48 pl-8 pr-3 text-xs border border-slate-200 rounded-md bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-navy-900 focus:border-navy-900 transition-colors"
           />
         </div>
 
-        {/* Pending Alerts Pill */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-900 border border-amber-200/70 rounded-md text-xs font-medium">
-          <Bell size={16} weight="bold" className="text-amber-600" />
-          <span>{totalActionItems} Action Items</span>
-        </div>
+        {/* Notification Bell */}
+        <button className="relative p-1 text-slate-500 hover:text-slate-700 transition-colors">
+          <Bell size={18} weight="bold" />
+          {totalActionItems > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 flex items-center justify-center bg-red-500 text-white text-[10px] font-semibold rounded-full px-1 leading-none">
+              {totalActionItems}
+            </span>
+          )}
+        </button>
 
-        {/* Switch to Investor Portal Link */}
+        {/* Client Portal Link */}
         <Link
           href="/"
-          className="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-navy-900 bg-navy-50 hover:bg-navy-100 px-3 py-1.5 rounded-md border border-navy-200/60 transition-colors"
+          className="flex items-center gap-1 text-xs text-navy-900 hover:text-navy-800 transition-colors"
         >
-          <span>Investor Portal</span>
           <ArrowSquareOut size={14} weight="bold" />
+          <span>Client Portal</span>
         </Link>
       </div>
     </header>

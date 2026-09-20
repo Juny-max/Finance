@@ -4,14 +4,14 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { 
-  House, 
-  ShieldCheck, 
-  ArrowsLeftRight, 
-  Users, 
-  Coins, 
+import {
+  House,
+  ShieldCheck,
+  ArrowsLeftRight,
+  Users,
+  Coins,
   ArrowSquareOut,
-  UserCircle
+  UserCircle,
 } from '@phosphor-icons/react';
 import { useStore } from '@/lib/store';
 
@@ -28,12 +28,14 @@ export function AdminSidebar() {
   const { applications, allTransactions } = useStore();
 
   const pendingAppsCount = applications.filter((a) => a.status === 'pending_review').length;
-  const pendingTxnsCount = allTransactions.filter((t) => t.status === 'processing' || t.status === 'pending').length;
+  const pendingTxnsCount = allTransactions.filter(
+    (t) => t.status === 'processing' || t.status === 'pending'
+  ).length;
 
   return (
     <aside className="w-64 h-screen fixed top-0 left-0 bg-[#0B192C] border-r border-slate-800 flex flex-col z-30 text-slate-300 select-none">
       {/* Brand Header */}
-      <div className="h-16 flex items-center px-5 border-b border-slate-800/80 justify-between">
+      <div className="h-16 flex items-center px-5 border-b border-slate-800/80">
         <Link href="/admin" className="flex items-center gap-2.5 group">
           <Image
             src="/logo-without text.png"
@@ -45,55 +47,53 @@ export function AdminSidebar() {
           />
           <div className="flex flex-col">
             <div className="text-white font-semibold tracking-wide text-sm flex items-center gap-1.5">
-              AURA <span className="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] px-1 py-0.2 rounded font-medium tracking-wider">OPS DESK</span>
+              AURA{' '}
+              <span className="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] px-1 py-0.5 rounded font-medium tracking-wider">
+                OPS DESK
+              </span>
             </div>
-            <span className="text-[9px] text-slate-400 uppercase tracking-wider">Compliance & Admin</span>
+            <span className="text-[9px] text-slate-400 uppercase tracking-wider">
+              Compliance &amp; Admin
+            </span>
           </div>
         </Link>
-      </div>
-
-      {/* Operations Mode Banner */}
-      <div className="mx-4 mt-4 px-3 py-2 rounded bg-slate-800/60 border border-slate-700/50 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span className="text-xs font-medium text-slate-200">Back-Office Live</span>
-        </div>
-        <span className="text-[10px] uppercase font-mono text-slate-400">SEC-GH</span>
       </div>
 
       {/* Nav Items */}
       <nav className="flex-1 overflow-y-auto py-4 px-3">
         <div className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold px-3 mb-2">
-          Operations & Control
+          Operations &amp; Control
         </div>
-        <ul className="space-y-1">
+        <ul className="space-y-0.5">
           {ADMIN_NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
-            const badgeCount = item.hasAppBadge ? pendingAppsCount : item.hasTxnBadge ? pendingTxnsCount : 0;
+            const badgeCount = item.hasAppBadge
+              ? pendingAppsCount
+              : item.hasTxnBadge
+              ? pendingTxnsCount
+              : 0;
 
             return (
               <li key={item.name}>
                 <Link
                   href={item.href}
-                  className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-all duration-150 ${
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-md text-sm transition-all duration-150 ${
                     isActive
-                      ? 'bg-amber-500/10 text-amber-300 font-medium border border-amber-500/30'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800/70 border border-transparent'
+                      ? 'bg-slate-800/70 text-white font-medium border-l-2 border-amber-500'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/50 border-l-2 border-transparent'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <Icon
-                      size={20}
+                      size={18}
                       weight={isActive ? 'fill' : 'bold'}
-                      className={isActive ? 'text-amber-400' : 'text-slate-400'}
+                      className={isActive ? 'text-white' : 'text-slate-400'}
                     />
                     <span>{item.name}</span>
                   </div>
                   {badgeCount > 0 && (
-                    <span className={`px-2 py-0.5 text-[11px] font-bold rounded-full ${
-                      isActive ? 'bg-amber-400 text-slate-950' : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                    }`}>
+                    <span className="text-slate-900 bg-white/90 rounded text-[11px] font-semibold px-1.5">
                       {badgeCount}
                     </span>
                   )}
@@ -105,23 +105,20 @@ export function AdminSidebar() {
       </nav>
 
       {/* Bottom Switcher & Profile */}
-      <div className="p-3 border-t border-slate-800/80 space-y-2 bg-[#081220]">
+      <div className="p-3 border-t border-slate-800/80 space-y-1">
         <Link
           href="/"
-          className="flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-medium text-slate-300 bg-slate-800/80 hover:bg-slate-700 hover:text-white transition-colors border border-slate-700"
+          className="flex items-center gap-2 w-full px-3 py-2 rounded-md text-xs text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors"
         >
-          <span className="flex items-center gap-2">
-            <ArrowSquareOut size={16} weight="bold" className="text-amber-400" />
-            <span>Switch to Investor Portal</span>
-          </span>
-          <span className="text-[10px] text-slate-400">Client View →</span>
+          <ArrowSquareOut size={15} weight="bold" />
+          <span>Switch to Investor Portal</span>
         </Link>
 
         <div className="flex items-center gap-2.5 px-3 py-2 text-xs">
-          <UserCircle size={28} weight="fill" className="text-slate-400" />
+          <UserCircle size={26} weight="fill" className="text-slate-500 shrink-0" />
           <div className="flex flex-col truncate">
-            <span className="font-medium text-slate-200 truncate">Audrey Mensah</span>
-            <span className="text-[10px] text-slate-400 truncate">Head of Compliance</span>
+            <span className="font-medium text-slate-300 truncate">Audrey Mensah</span>
+            <span className="text-[10px] text-slate-500 truncate">Head of Compliance</span>
           </div>
         </div>
       </div>
