@@ -2,11 +2,15 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { MagnifyingGlass, Bell, SignOut } from '@phosphor-icons/react';
+import { MagnifyingGlass, Bell, SignOut, List } from '@phosphor-icons/react';
 import { useStore } from '@/lib/store';
 import { useAuth } from '@/lib/auth';
 
-export function AdminTopBar() {
+interface AdminTopBarProps {
+  onMenuToggle?: () => void;
+}
+
+export function AdminTopBar({ onMenuToggle }: AdminTopBarProps) {
   const router = useRouter();
   const { applications, allTransactions } = useStore();
   const { logout } = useAuth();
@@ -23,9 +27,18 @@ export function AdminTopBar() {
   };
 
   return (
-    <header className="h-14 bg-white border-b border-slate-200/60 flex items-center justify-between px-6 sticky top-0 z-10">
-      {/* Left: Section Label */}
-      <span className="text-sm font-medium text-slate-700">Admin Console</span>
+    <header className="h-14 bg-white border-b border-slate-200/60 flex items-center justify-between px-4 sm:px-6 sticky top-0 z-10">
+      {/* Left: Mobile Toggle & Section Label */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onMenuToggle}
+          className="p-1.5 -ml-1.5 text-slate-600 hover:text-slate-900 rounded-md hover:bg-slate-100 lg:hidden"
+          aria-label="Open navigation menu"
+        >
+          <List size={22} weight="bold" />
+        </button>
+        <span className="text-sm font-medium text-slate-700">Admin Console</span>
+      </div>
 
       {/* Right Side Controls */}
       <div className="flex items-center gap-3.5">

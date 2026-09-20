@@ -12,6 +12,7 @@ import {
   Coins,
   UserCircle,
   SignOut,
+  X,
 } from '@phosphor-icons/react';
 import { useStore } from '@/lib/store';
 import { useAuth } from '@/lib/auth';
@@ -24,7 +25,12 @@ const ADMIN_NAV_ITEMS = [
   { name: 'Fund Pricing', href: '/admin/funds', icon: Coins },
 ];
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { applications, allTransactions } = useStore();
@@ -38,34 +44,61 @@ export function AdminSidebar() {
   const handleLogout = () => {
     logout();
     router.push('/login');
+    if (onClose) onClose();
+  };
+
+  const handleNavClick = () => {
+    if (onClose) onClose();
   };
 
   return (
-    <aside className="w-60 h-screen fixed top-0 left-0 bg-white border-r border-slate-200/60 flex flex-col z-20 select-none">
-      {/* Brand Header */}
-      <div className="h-14 flex items-center px-5 border-b border-slate-200/60">
-        <Link href="/admin" className="flex items-center gap-2.5 group">
-          <Image
-            src="/logo-without text.png"
-            alt="Aura Asset Management"
-            width={32}
-            height={32}
-            className="w-8 h-8 object-contain transition-transform group-hover:scale-105"
-            priority
-          />
-          <div className="flex flex-col">
-            <div className="text-navy-900 font-semibold tracking-wide text-sm flex items-center gap-1.5">
-              AURA{' '}
-              <span className="bg-slate-100 text-slate-800 text-[9px] px-1.5 py-0.5 rounded font-medium">
-                ADMIN
+    <>
+      {/* Mobile Backdrop */}
+      {isOpen && (
+        <div
+          onClick={onClose}
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 lg:hidden"
+        />
+      )}
+
+      <aside
+        className={`w-60 h-screen fixed top-0 left-0 bg-white border-r border-slate-200/60 flex flex-col z-50 lg:z-20 select-none transition-transform duration-200 ease-in-out ${
+          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        }`}
+      >
+        {/* Brand Header */}
+        <div className="h-14 flex items-center justify-between px-5 border-b border-slate-200/60">
+          <Link href="/admin" onClick={handleNavClick} className="flex items-center gap-2.5 group">
+            <Image
+              src="/logo-without text.png"
+              alt="Aura Asset Management"
+              width={32}
+              height={32}
+              className="w-8 h-8 object-contain transition-transform group-hover:scale-105"
+              priority
+            />
+            <div className="flex flex-col">
+              <div className="text-navy-900 font-semibold tracking-wide text-sm flex items-center gap-1.5">
+                AURA{' '}
+                <span className="bg-slate-100 text-slate-800 text-[9px] px-1.5 py-0.5 rounded font-medium">
+                  ADMIN
+                </span>
+              </div>
+              <span className="text-[9px] text-slate-500 uppercase tracking-widest">
+                Management
               </span>
             </div>
-            <span className="text-[9px] text-slate-500 uppercase tracking-widest">
-              Management
-            </span>
-          </div>
-        </Link>
-      </div>
+          </Link>
+
+          {/* Close button on mobile */}
+          <button
+            onClick={onClose}
+            className="p-1.5 text-slate-400 hover:text-slate-600 rounded-md lg:hidden"
+            aria-label="Close menu"
+          >
+            <X size={18} weight="bold" />
+          </button>
+        </div>
 
       {/* Nav Items */}
       <nav className="flex-1 overflow-y-auto py-4 px-3">
@@ -86,6 +119,7 @@ export function AdminSidebar() {
               <li key={item.name}>
                 <Link
                   href={item.href}
+                  onClick={handleNavClick}
                   className={`flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors ${
                     isActive
                       ? 'bg-slate-100 text-slate-900 font-medium'
@@ -133,5 +167,6 @@ export function AdminSidebar() {
         </button>
       </div>
     </aside>
+    </>
   );
 }
