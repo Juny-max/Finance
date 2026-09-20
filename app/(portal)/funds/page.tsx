@@ -19,17 +19,17 @@ export default function FundsPage() {
       transition={{ duration: 0.3 }}
       className="max-w-6xl mx-auto space-y-8 pb-12"
     >
-      <div className="mt-4">
-        <h1 className="text-3xl font-light text-slate-900 tracking-tight">Aura Funds</h1>
-        <p className="text-slate-500 mt-2">Explore our range of collective investment schemes</p>
+      <div className="mt-2 sm:mt-4">
+        <h1 className="text-2xl sm:text-3xl font-light text-slate-900 tracking-tight">Bora Funds</h1>
+        <p className="text-xs sm:text-sm text-slate-500 mt-1 sm:mt-2">Explore our range of collective investment schemes</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         {funds.map((fund) => (
           <div key={fund.id} className="bg-white border border-slate-200/60 rounded-lg overflow-hidden flex flex-col hover:shadow-sm transition-shadow">
             <div className="h-[3px] w-full" style={{ backgroundColor: fund.color || "#0B192C" }} />
             
-            <div className="p-6 flex-1 flex flex-col">
+            <div className="p-4 sm:p-6 flex-1 flex flex-col">
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="text-lg font-semibold text-slate-900">{fund.name}</h3>

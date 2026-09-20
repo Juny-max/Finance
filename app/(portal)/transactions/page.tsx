@@ -172,8 +172,8 @@ export default function TransactionsPage() {
                     </p>
                     <p className="text-xs text-slate-500 mt-0.5">{formatDate(tx.date)}</p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium">{formatTxAmount(tx)}</p>
+                  <div className="text-right shrink-0">
+                    <p className="text-sm font-medium whitespace-nowrap">{formatTxAmount(tx)}</p>
                     <div className="mt-1 flex justify-end">{getStatusIcon(tx.status)}</div>
                   </div>
                 </div>

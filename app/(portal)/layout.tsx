@@ -38,8 +38,8 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
       <div className="flex-1 flex flex-col w-full lg:ml-60">
         <TopBar />
         
-        <main className="flex-1 overflow-y-auto bg-slate-50 pb-16 lg:pb-0">
-          <div className="px-4 sm:px-6 lg:px-8 py-6 lg:py-8 max-w-6xl mx-auto">
+        <main className="flex-1 overflow-y-auto bg-slate-50 pb-24 lg:pb-0">
+          <div className="px-3.5 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 max-w-6xl mx-auto">
             {children}
           </div>
         </main>
